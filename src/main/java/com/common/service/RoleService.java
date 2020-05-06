@@ -5,7 +5,7 @@ import com.common.entity.Role;
 
 public interface RoleService extends BaseService<Role> {
 
-    Role findByName(String name);
+    Role findByName(final String name);
 
-    Role findByCode(String code);
+    Role findByCode(final String code);
 }

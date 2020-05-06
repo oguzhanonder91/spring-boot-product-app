@@ -22,8 +22,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(path = "/registration")
-    public ResponseEntity<String> registrationNewUser(@Valid @RequestBody UserDto userDto) {
-        User user = userDao.registerNewUserAccount(userDto);
+    public ResponseEntity<String> registrationNewUser(@Valid @RequestBody final UserDto userDto) {
+        final User user = userDao.registerNewUserAccount(userDto);
         userService.save(user);
         return new ResponseEntity<>("Kayıt Başarılı", HttpStatus.OK);
     }

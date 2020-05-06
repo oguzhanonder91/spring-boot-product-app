@@ -25,7 +25,7 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     private SecurityUtil securityUtil;
 
     @Override
-    public List<T> saveAll(List<T> list) {
+    public List<T> saveAll(final List<T> list) {
         list.stream()
                 .peek(s->s.setEntityState(BaseEntity.EntityState.ACTIVE))
                 .collect(Collectors.toList());
@@ -33,12 +33,12 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public List<T> findAllById(List<String> strings) {
+    public List<T> findAllById(final List<String> strings) {
         return repository.findAllById(strings);
     }
 
     @Override
-    public void deleteAll(List<T> list) {
+    public void deleteAll(final List<T> list) {
         list.stream()
                 .peek(s->s.setEntityState(BaseEntity.EntityState.PASSIVE))
                 .collect(Collectors.toList());
@@ -46,24 +46,24 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public T getOne(String id) {
+    public T getOne(final String id) {
         return (T) repository.getOne(id);
     }
 
     @Override
-    public Optional<T> findById(String id) {
+    public Optional<T> findById(final String id) {
         return repository.findById(id);
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(final String id) {
         Optional<T> t = repository.findById(id);
         t.get().setEntityState(BaseEntity.EntityState.PASSIVE);
         repository.save(t.get());
     }
 
     @Override
-    public boolean existsById(String id) {
+    public boolean existsById(final String id) {
         return repository.existsById(id);
     }
 
@@ -73,17 +73,17 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public  List<T> findAll(Example<T> example, Sort sort) {
+    public  List<T> findAll(final Example<T> example, final Sort sort) {
         return repository.findAll(example, sort);
     }
 
     @Override
-    public T saveAndFlush(T entity) {
+    public T saveAndFlush(final T entity) {
         return (T) repository.saveAndFlush(entity);
     }
 
     @Override
-    public List<T> findAll(Example<T> example) {
+    public List<T> findAll(final Example<T> example) {
         return repository.findAll(example);
     }
 
@@ -98,17 +98,17 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public List<T> findAll(Sort sort) {
+    public List<T> findAll(final Sort sort) {
         return repository.findAll(sort);
     }
 
     @Override
-    public Page<T> findAll(Pageable pageable) {
+    public Page<T> findAll(final Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Override
-    public T save(T t) {
+    public T save(final T t) {
         t.setEntityState(BaseEntity.EntityState.ACTIVE);
         t.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setCreatedDate(new Date(System.currentTimeMillis()));
@@ -116,7 +116,7 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public void delete(T t) {
+    public void delete(final T t) {
         t.setEntityState(BaseEntity.EntityState.PASSIVE);
         repository.save(t);
     }

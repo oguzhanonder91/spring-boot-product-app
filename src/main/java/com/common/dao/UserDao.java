@@ -23,7 +23,7 @@ public class UserDao {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerNewUserAccount(UserDto accountDto) {
+    public User registerNewUserAccount(final UserDto accountDto) {
         if (emailExist(accountDto.getEmail())) {
             throw new BaseException("There is an account with that email adress: " + accountDto.getEmail());
         }
@@ -38,7 +38,7 @@ public class UserDao {
         return user;
     }
 
-    private boolean emailExist(String email) {
+    private boolean emailExist(final String email) {
         return userService.findByEmail(email) != null;
     }
 }

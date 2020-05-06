@@ -16,12 +16,12 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     RoleRepository roleRepository;
 
     @Override
-    public Role findByName(String name) {
+    public Role findByName(final String name) {
         return roleRepository.findByName(name);
     }
 
     @Override
-    public Role findByCode(String code) {
+    public Role findByCode(final String code) {
         return roleRepository.findByCode(code);
     }
 }

@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping(value = "/login")
     @ResponseBody
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws BaseException {
+    public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest) throws BaseException {
         authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(loginRequest.getUsername());
@@ -45,11 +45,11 @@ public class AuthController {
     @PostMapping(value = "/logout")
     @ResponseBody
     public ResponseEntity<?> logout() throws BaseException {
-        String user = securityUtil.getCurrentAuditor();
+        final String user = securityUtil.getCurrentAuditor();
         return ResponseEntity.ok(user);
     }
 
-    private void authenticate(String username, String password) throws BaseException {
+    private void authenticate(final String username, final String password) throws BaseException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {

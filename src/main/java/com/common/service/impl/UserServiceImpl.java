@@ -14,7 +14,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     private UserRepository userRepository;
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(final String email) {
         return userRepository.findByEmail(email);
     }
 

@@ -14,40 +14,40 @@ public interface BaseService<T extends BaseEntity> {
 
     List<T> findAll();
 
-    List<T> findAll(Sort sort);
+    List<T> findAll(final Sort sort);
 
     void flush();
 
-    T saveAndFlush(T entity);
+    T saveAndFlush(final T entity);
 
-    List<T> findAll(Example<T> example, Sort sort);
+    List<T> findAll(final Example<T> example, final Sort sort);
 
-    List<T> findAll(Example<T> example);
+    List<T> findAll(final Example<T> example);
 
-    T getOne(String id);
+    T getOne(final String id);
 
     void deleteAllInBatch();
 
-    Page<T> findAll(Pageable pageable);
+    Page<T> findAll(final Pageable pageable);
 
-    Optional<T> findById(String id);
+    Optional<T> findById(final String id);
 
-    T save(T t);
+    T save(final T t);
 
-    T update(T t);
+    T update(final T t);
 
-    void deleteById(String id);
+    void deleteById(final String id);
 
-    void delete(T t);
+    void delete(final T t);
 
     long count();
 
-    boolean existsById(String id);
+    boolean existsById(final String id);
 
-    List<T> saveAll(List<T> list);
+    List<T> saveAll(final List<T> list);
 
-    List<T> findAllById(List<String> strings);
+    List<T> findAllById(final List<String> strings);
 
-    void deleteAll(List<T> list);
+    void deleteAll(final List<T> list);
 
 }
