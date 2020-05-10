@@ -38,7 +38,9 @@ public interface BaseService<T extends BaseEntity> {
 
     void deleteById(final String id);
 
-    void delete(final T t);
+    void softDelete(final T t);
+
+    void deleteReal(final T t);
 
     long count();
 

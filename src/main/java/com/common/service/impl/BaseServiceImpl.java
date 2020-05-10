@@ -116,7 +116,7 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     }
 
     @Override
-    public void delete(final T t) {
+    public void softDelete(final T t) {
         t.setEntityState(BaseEntity.EntityState.PASSIVE);
         repository.save(t);
     }
@@ -132,5 +132,10 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
         return (T) repository.save(t);
+    }
+
+    @Override
+    public void deleteReal(T t) {
+     repository.delete(t);
     }
 }
