@@ -46,7 +46,8 @@ public class ProductController {
     @PutMapping(path = "/update")
     public ResponseEntity<Product> update(@Valid @RequestBody Product product) {
         final Optional<Product> productOpt = productService.findById(product.getId());
-        productOpt.get().setCount(product.getCount() - product.getSellCount());
+        productOpt.get().setCount(productOpt.get().getCount() - product.getSellCount());
+        productOpt.get().setSellCount(product.getSellCount());
         productService.update(productOpt.get());
         return new ResponseEntity<>(productOpt.get(), HttpStatus.OK);
     }

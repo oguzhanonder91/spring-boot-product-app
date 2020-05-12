@@ -46,9 +46,10 @@ public class AuthController {
     @PostMapping(value = "/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws BaseException {
-        authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+        LoginRequest decodeLoginRequest = securityUtil.loginRequestBase64Decode(loginRequest);
+        authenticate(decodeLoginRequest.getUsername(), decodeLoginRequest.getPassword());
         final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginRequest.getUsername());
+                .loadUserByUsername(decodeLoginRequest.getUsername());
         final String token = jwtTokenUtil.generateJwtToken(userDetails);
         Token tokenObj = tokenDao.tokenCreate(token, userDetails.getUsername(), httpServletRequest);
         tokenService.save(tokenObj);
