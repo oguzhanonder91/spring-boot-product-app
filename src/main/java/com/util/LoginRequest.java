@@ -1,7 +1,10 @@
 package com.util;
 
+import com.util.annotations.Decode;
+
 import java.io.Serializable;
 
+@Decode(methods = {"Username-username", "Password-password"})
 public class LoginRequest implements Serializable {
 
     private String username;

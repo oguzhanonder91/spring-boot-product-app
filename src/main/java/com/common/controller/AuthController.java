@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping(value = "/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws BaseException {
-        LoginRequest decodeLoginRequest = securityUtil.loginRequestBase64Decode(loginRequest);
+        LoginRequest decodeLoginRequest = securityUtil.decode(loginRequest);
         authenticate(decodeLoginRequest.getUsername(), decodeLoginRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(decodeLoginRequest.getUsername());
