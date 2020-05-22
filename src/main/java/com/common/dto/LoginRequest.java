@@ -1,4 +1,4 @@
-package com.util;
+package com.common.dto;
 
 import com.util.annotations.Decode;
 
