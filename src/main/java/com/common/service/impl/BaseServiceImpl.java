@@ -28,6 +28,8 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     public List<T> saveAll(final List<T> list) {
         list.stream()
                 .peek(s->s.setEntityState(BaseEntity.EntityState.ACTIVE))
+                .peek(s->s.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor())))
+                .peek(s->s.setCreatedDate(new Date(System.currentTimeMillis())))
                 .collect(Collectors.toList());
         return repository.saveAll(list);
     }
@@ -41,6 +43,8 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     public void deleteAll(final List<T> list) {
         list.stream()
                 .peek(s->s.setEntityState(BaseEntity.EntityState.PASSIVE))
+                .peek(s->s.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor())))
+                .peek(s->s.setLastUpdatedDate(new Date(System.currentTimeMillis())))
                 .collect(Collectors.toList());
         repository.saveAll(list);
     }
@@ -59,6 +63,8 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     public void deleteById(final String id) {
         Optional<T> t = repository.findById(id);
         t.get().setEntityState(BaseEntity.EntityState.PASSIVE);
+        t.get().setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
+        t.get().setLastUpdatedDate(new Date(System.currentTimeMillis()));
         repository.save(t.get());
     }
 
@@ -118,6 +124,8 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     @Override
     public void softDelete(final T t) {
         t.setEntityState(BaseEntity.EntityState.PASSIVE);
+        t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
+        t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
         repository.save(t);
     }
 
