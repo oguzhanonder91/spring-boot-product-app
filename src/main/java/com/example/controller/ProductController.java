@@ -43,12 +43,10 @@ public class ProductController {
         return new ResponseEntity<>(product.get(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/update")
+    @PutMapping(path = "/sell")
     public ResponseEntity<Product> update(@Valid @RequestBody Product product) {
-        final Optional<Product> productOpt = productService.findById(product.getId());
-        productOpt.get().setCount(productOpt.get().getCount() - product.getSellCount());
-        productOpt.get().setSellCount(product.getSellCount());
-        productService.update(productOpt.get());
-        return new ResponseEntity<>(productOpt.get(), HttpStatus.OK);
+        Product p = productDao.sellProduct(product);
+        productService.update(p);
+        return new ResponseEntity<>(p, HttpStatus.OK);
     }
 }

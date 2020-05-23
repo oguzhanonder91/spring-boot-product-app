@@ -85,6 +85,9 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
 
     @Override
     public T saveAndFlush(final T entity) {
+        entity.setEntityState(BaseEntity.EntityState.ACTIVE);
+        entity.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
+        entity.setCreatedDate(new Date(System.currentTimeMillis()));
         return (T) repository.saveAndFlush(entity);
     }
 
@@ -145,5 +148,13 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
     @Override
     public void deleteReal(T t) {
      repository.delete(t);
+    }
+
+    @Override
+    public T updateAndFlush(T t) {
+        t.setEntityState(BaseEntity.EntityState.ACTIVE);
+        t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
+        t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
+        return repository.saveAndFlush(t);
     }
 }

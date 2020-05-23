@@ -20,6 +20,8 @@ public interface BaseService<T extends BaseEntity> {
 
     T saveAndFlush(final T entity);
 
+    T updateAndFlush(final T entity);
+
     List<T> findAll(final Example<T> example, final Sort sort);
 
     List<T> findAll(final Example<T> example);
