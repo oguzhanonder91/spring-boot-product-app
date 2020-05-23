@@ -38,6 +38,10 @@ public class UserDao {
         return user;
     }
 
+    public User create (User user){
+        return userService.save(user);
+    }
+
     private boolean emailExist(final String email) {
         return userService.findByEmail(email) != null;
     }

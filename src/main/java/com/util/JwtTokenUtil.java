@@ -1,20 +1,17 @@
 package com.util;
 
-import java.io.Serializable;
-import java.security.Key;
-import java.util.Calendar;
-import java.util.Date;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.UserDetails;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtTokenUtil implements Serializable {

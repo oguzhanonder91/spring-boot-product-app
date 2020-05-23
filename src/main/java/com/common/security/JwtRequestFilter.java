@@ -2,7 +2,6 @@ package com.common.security;
 
 import com.common.dao.TokenDao;
 import com.common.entity.Token;
-import com.common.service.TokenService;
 import com.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

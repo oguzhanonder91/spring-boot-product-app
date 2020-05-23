@@ -38,8 +38,21 @@ public class TradeDao {
         return trade;
     }
 
-    public Trade getTrade(){
+    private Trade getTrade(){
         List<Trade> tradeList = tradeService.findAll();
         return tradeList.size() > 0 ? tradeList.get(0) : new Trade();
+    }
+
+    public List<Trade> findAll(){
+        List<Trade> tradeList = tradeService.findAll();
+        return tradeList;
+    }
+
+    public Trade update(Trade trade){
+        return tradeService.update(trade);
+    }
+
+    public Trade create(Trade trade){
+        return tradeService.save(trade);
     }
 }

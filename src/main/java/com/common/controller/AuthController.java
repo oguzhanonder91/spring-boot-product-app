@@ -1,21 +1,13 @@
 package com.common.controller;
 
+import com.common.dao.AuthDao;
 import com.common.dao.TokenDao;
+import com.common.dto.JwtResponse;
+import com.common.dto.LoginRequest;
 import com.common.entity.Token;
 import com.common.exception.BaseException;
-import com.common.security.MyUserDetailsService;
-import com.common.service.TokenService;
-import com.common.dto.JwtResponse;
-import com.util.JwtTokenUtil;
-import com.common.dto.LoginRequest;
-import com.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,56 +17,29 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
-
-    @Autowired
     private TokenDao tokenDao;
 
     @Autowired
-    private TokenService tokenService;
+    private AuthDao authDao;
 
     @PostMapping(value = "/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws BaseException {
-        LoginRequest decodeLoginRequest = securityUtil.decode(loginRequest);
-        authenticate(decodeLoginRequest.getUsername(), decodeLoginRequest.getPassword());
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(decodeLoginRequest.getUsername());
-        final String token = jwtTokenUtil.generateJwtToken(userDetails);
-        Token tokenObj = tokenDao.tokenCreate(token, userDetails.getUsername(), httpServletRequest);
-        tokenService.save(tokenObj);
-        return ResponseEntity.ok(new JwtResponse(token));
+        Token token = authDao.loginAttempt(loginRequest,httpServletRequest);
+        tokenDao.create(token);
+        return ResponseEntity.ok(new JwtResponse(token.getValue()));
     }
 
     @PostMapping(value = "/logout")
     @ResponseBody
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) throws BaseException {
-        final String user = securityUtil.getCurrentAuditor();
-        String token = jwtTokenUtil.parseJwt(httpServletRequest);
-        Token validToken = tokenDao.controlToken(token, user, httpServletRequest);
-        if (validToken != null) {
-            tokenService.deleteReal(validToken);
+        Token token= authDao.logoutAttempt(httpServletRequest);
+        if (token!= null) {
+            tokenDao.deleteRealToken(token);
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok("Başarılı Şekilde Çıkış Yapıldı");
     }
 
-    private void authenticate(final String username, final String password) throws BaseException {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new BaseException("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new BaseException("INVALID_CREDENTIALS", e);
-        }
-    }
+
 }
 

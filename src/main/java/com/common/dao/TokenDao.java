@@ -17,7 +17,7 @@ public class TokenDao {
     @Autowired
     private TokenService tokenService;
 
-    public Token tokenCreate(final String paramToken, final String email, final HttpServletRequest request) {
+    public Token tokenPrepare(final String paramToken, final String email, final HttpServletRequest request) {
         final Token token = new Token();
         token.setEmail(email);
         if (StringUtils.isEmpty(paramToken)) {
@@ -29,6 +29,10 @@ public class TokenDao {
         return token;
     }
 
+    public Token create (Token token){
+        return tokenService.save(token);
+    }
+
     public Token controlToken(final String tokenParam, final String email, final HttpServletRequest request) {
          String origin = "";
         if (!StringUtils.isEmpty(request.getHeader("origin"))) {
@@ -36,5 +40,11 @@ public class TokenDao {
         }
         final List<Token> tokens = tokenService.findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(tokenParam, email, origin, TokenType.AUTH);
         return tokens.size()> 0 ? tokens.get(0) : null;
+    }
+
+    public void deleteRealToken(Token validToken){
+        if (validToken != null) {
+            tokenService.deleteReal(validToken);
+        }
     }
 }
