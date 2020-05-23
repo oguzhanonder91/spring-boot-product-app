@@ -35,7 +35,6 @@ public abstract class BaseEntity  implements Serializable{
     private Date createdDate;
 
     @Column(nullable = true)
-    @LastModifiedBy
     private String lastUpdatedBy;
 
     @Column
