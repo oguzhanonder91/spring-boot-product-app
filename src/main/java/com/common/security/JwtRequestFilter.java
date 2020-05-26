@@ -3,6 +3,7 @@ package com.common.security;
 import com.common.dao.TokenDao;
 import com.common.entity.Token;
 import com.util.JwtTokenUtil;
+import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 String username = jwtTokenUtil.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
-                Token isValid = tokenDao.controlToken(jwt,username,httpServletRequest);
+                Token isValid = tokenDao.controlToken(jwt,username, TokenType.AUTH,httpServletRequest);
                 if(userDetails != null && isValid!= null){
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());

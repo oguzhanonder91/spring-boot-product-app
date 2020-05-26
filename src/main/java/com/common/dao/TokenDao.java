@@ -17,14 +17,15 @@ public class TokenDao {
     @Autowired
     private TokenService tokenService;
 
-    public Token tokenPrepare(final String paramToken, final String email, final HttpServletRequest request) {
+    public Token tokenPrepare(final String paramToken, final String email, final TokenType tokenType , final long expiry , final HttpServletRequest request) {
         final Token token = new Token();
         token.setEmail(email);
         if (StringUtils.isEmpty(paramToken)) {
             throw new BaseException("Token üretilemedi");
         }
         token.setValue(paramToken);
-        token.setTokenType(TokenType.AUTH);
+        token.setTokenType(tokenType);
+        token.setExpiry(expiry);
         token.setDomain(StringUtils.isEmpty(request.getHeader("origin")) ? "thirdPart" : request.getHeader("origin"));
         return token;
     }
@@ -33,12 +34,12 @@ public class TokenDao {
         return tokenService.save(token);
     }
 
-    public Token controlToken(final String tokenParam, final String email, final HttpServletRequest request) {
+    public Token controlToken(final String tokenParam, final String email, TokenType tokenType , final HttpServletRequest request) {
          String origin = "";
         if (!StringUtils.isEmpty(request.getHeader("origin"))) {
             origin = request.getHeader("origin");
         }
-        final List<Token> tokens = tokenService.findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(tokenParam, email, origin, TokenType.AUTH);
+        final List<Token> tokens = tokenService.findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(tokenParam, email, origin, tokenType);
         return tokens.size()> 0 ? tokens.get(0) : null;
     }
 

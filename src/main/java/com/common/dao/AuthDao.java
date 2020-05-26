@@ -6,6 +6,7 @@ import com.common.exception.BaseException;
 import com.common.security.MyUserDetailsService;
 import com.util.JwtTokenUtil;
 import com.util.SecurityUtil;
+import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,7 +46,7 @@ public class AuthDao {
     public Token logoutAttempt(HttpServletRequest request) {
         final String user = securityUtil.getCurrentAuditor();
         String token = jwtTokenUtil.parseJwt(request);
-        Token validToken = tokenDao.controlToken(token, user, request);
+        Token validToken = tokenDao.controlToken(token, user, TokenType.AUTH, request);
         return validToken;
     }
 
@@ -61,7 +62,8 @@ public class AuthDao {
     }
 
     private Token prepare(String token, UserDetails userDetails, HttpServletRequest httpServletRequest) {
-        Token tokenObj = tokenDao.tokenPrepare(token, userDetails.getUsername(), httpServletRequest);
+        long expiry = jwtTokenUtil.getExpirationDate(token);
+        Token tokenObj = tokenDao.tokenPrepare(token, userDetails.getUsername(), TokenType.AUTH, expiry, httpServletRequest);
         return tokenObj;
     }
 

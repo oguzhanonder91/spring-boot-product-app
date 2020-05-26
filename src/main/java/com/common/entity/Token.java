@@ -20,6 +20,8 @@ public class Token extends BaseEntity{
     @Column
     private String email;
 
+    @Column
+    private long expiry;
 
     public TokenType getTokenType() {
         return tokenType;
@@ -51,5 +53,13 @@ public class Token extends BaseEntity{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public long getExpiry() {
+        return expiry;
+    }
+
+    public void setExpiry(long expiry) {
+        this.expiry = expiry;
     }
 }

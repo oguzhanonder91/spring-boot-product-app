@@ -39,6 +39,10 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
     }
 
+    public long getExpirationDate(String token) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getExpiration().getTime();
+    }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(key).parseClaimsJws(authToken);

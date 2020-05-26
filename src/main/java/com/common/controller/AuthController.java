@@ -27,7 +27,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws BaseException {
         Token token = authDao.loginAttempt(loginRequest,httpServletRequest);
         tokenDao.create(token);
-        return ResponseEntity.ok(new JwtResponse(token.getValue()));
+        return ResponseEntity.ok(new JwtResponse(token.getValue(),token.getExpiry()));
     }
 
     @PostMapping(value = "/logout")
