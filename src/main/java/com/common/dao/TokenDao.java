@@ -17,15 +17,10 @@ public class TokenDao {
     @Autowired
     private TokenService tokenService;
 
-    public Token tokenPrepare(final String paramToken, final String email, final TokenType tokenType , final long expiry , final HttpServletRequest request) {
-        final Token token = new Token();
-        token.setEmail(email);
-        if (StringUtils.isEmpty(paramToken)) {
+    public Token tokenPrepare(final Token token , final HttpServletRequest request) {
+        if (StringUtils.isEmpty(token.getValue())) {
             throw new BaseException("Token üretilemedi");
         }
-        token.setValue(paramToken);
-        token.setTokenType(tokenType);
-        token.setExpiry(expiry);
         token.setDomain(StringUtils.isEmpty(request.getHeader("origin")) ? "thirdPart" : request.getHeader("origin"));
         return token;
     }

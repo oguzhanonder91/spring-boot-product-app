@@ -18,8 +18,6 @@ public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
 
-    private long issueDate = System.currentTimeMillis();
-
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
@@ -27,6 +25,7 @@ public class JwtTokenUtil implements Serializable {
     Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateJwtToken(UserDetails userDetails) {
+        long issueDate = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject((userDetails.getUsername()))
                 .setIssuedAt(new Date(issueDate))
@@ -41,6 +40,10 @@ public class JwtTokenUtil implements Serializable {
 
     public long getExpirationDate(String token) {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getExpiration().getTime();
+    }
+
+    public long getIssuedDate(String token) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getIssuedAt().getTime();
     }
 
     public boolean validateJwtToken(String authToken) {

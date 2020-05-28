@@ -63,7 +63,13 @@ public class AuthDao {
 
     private Token prepare(String token, UserDetails userDetails, HttpServletRequest httpServletRequest) {
         long expiry = jwtTokenUtil.getExpirationDate(token);
-        Token tokenObj = tokenDao.tokenPrepare(token, userDetails.getUsername(), TokenType.AUTH, expiry, httpServletRequest);
+        long issuedAt = jwtTokenUtil.getIssuedDate(token);
+        Token newTokenObj = new Token()
+                .value(token)
+                .email(userDetails.getUsername())
+                .tokenType(TokenType.AUTH).expiry(expiry)
+                .issuedAt(issuedAt);
+        Token tokenObj = tokenDao.tokenPrepare(newTokenObj, httpServletRequest);
         return tokenObj;
     }
 
