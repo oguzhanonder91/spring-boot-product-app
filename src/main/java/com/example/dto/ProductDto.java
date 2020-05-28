@@ -18,9 +18,16 @@ public class ProductDto {
     private double price;
 
     @NotNull
-    private long count;
+    private long remaining;
 
     private long sellCount;
+
+    private long total ;
+
+    @NotNull
+    private double sellPrice;
+
+    private double profit;
 
     public String getTitle() {
         return title;
@@ -46,12 +53,12 @@ public class ProductDto {
         this.price = price;
     }
 
-    public long getCount() {
-        return count;
+    public long getRemaining() {
+        return remaining;
     }
 
-    public void setCount(long count) {
-        this.count = count;
+    public void setRemaining(long remaining) {
+        this.remaining = remaining;
     }
 
     public long getSellCount() {
@@ -60,5 +67,29 @@ public class ProductDto {
 
     public void setSellCount(long sellCount) {
         this.sellCount = sellCount;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
     }
 }

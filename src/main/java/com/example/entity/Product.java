@@ -20,10 +20,19 @@ public class Product extends BaseEntity {
     private double price;
 
     @Column
-    private long count ;
+    private long remaining ;
+
+    @Column
+    private long total ;
 
     @Column
     private long sellCount ;
+
+    @Column
+    private double sellPrice;
+
+    @Column
+    private double profit;
 
     public String getTitle() {
         return title;
@@ -49,19 +58,43 @@ public class Product extends BaseEntity {
         this.price = price;
     }
 
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
-    }
-
     public long getSellCount() {
         return sellCount;
     }
 
     public void setSellCount(long sellCount) {
         this.sellCount = sellCount;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public long getRemaining() {
+        return remaining;
+    }
+
+    public void setRemaining(long remaining) {
+        this.remaining = remaining;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
     }
 }

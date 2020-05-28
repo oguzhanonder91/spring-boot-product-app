@@ -17,15 +17,17 @@ public class TradeDao {
 
     public Trade convertFromDto(TradeDto tradeDto){
         Trade trade = getTrade();
-        trade.setCount(tradeDto.getCount());
         if(!StringUtils.isEmpty(trade.getId())){
             if(tradeDto.getPurchase() != 0 ){
                 trade.setPurchase(trade.getPurchase() + tradeDto.getPurchase() * tradeDto.getCount());
+                trade.setCount(trade.getCount() + tradeDto.getCount());
             }
             if(tradeDto.getSale() != 0 ){
                 trade.setSale(trade.getSale() + tradeDto.getSale() * tradeDto.getCount());
+                trade.setCount(trade.getCount() - tradeDto.getCount());
             }
         }else{
+            trade.setCount(tradeDto.getCount());
             if(tradeDto.getPurchase() != 0 ){
                 trade.setPurchase(tradeDto.getPurchase() * tradeDto.getCount());
             }

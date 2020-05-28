@@ -18,36 +18,41 @@ public class ProductDao {
 
     public Product convertProductFromDto(ProductDto productDto) {
         Product product = new Product();
-        product.setCount(productDto.getCount());
+        product.setRemaining(productDto.getRemaining());
+        product.setTotal(productDto.getTotal());
+        product.setSellCount(productDto.getSellCount());
         product.setDescription(productDto.getDescription());
         product.setTitle(productDto.getTitle());
         product.setPrice(productDto.getPrice());
+        product.setProfit((productDto.getSellCount() * productDto.getSellPrice()) - (productDto.getPrice() * productDto.getTotal()));
         return product;
     }
 
-    public Product create (Product product){
+    public Product create(Product product) {
         return productService.save(product);
     }
 
-    public Product update (Product product){
+    public Product update(Product product) {
         return productService.update(product);
     }
 
-    public Optional<Product> findById (String id){
+    public Optional<Product> findById(String id) {
         return productService.findById(id);
     }
 
-    public List<Product> getAllProduct(){
+    public List<Product> getAllProduct() {
         return productService.findAll();
     }
 
     public Product sellProduct(Product product) {
         Optional<Product> p = productService.findById(product.getId());
         if (p.isPresent()) {
-            p.get().setCount(p.get().getCount() - product.getSellCount());
-            p.get().setSellCount(product.getSellCount());
+            p.get().setRemaining(p.get().getRemaining() - product.getSellCount());
+            p.get().setSellCount(p.get().getSellCount() + product.getSellCount());
+            p.get().setSellPrice(product.getSellPrice());
+            p.get().setProfit(p.get().getProfit() + (product.getSellCount() * product.getSellPrice()));
             return p.get();
-        }else{
+        } else {
             throw new BaseNotFoundException("Id Bulunamadı");
         }
     }
