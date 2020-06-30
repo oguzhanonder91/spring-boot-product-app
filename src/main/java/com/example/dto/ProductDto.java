@@ -1,7 +1,5 @@
 package com.example.dto;
 
-import com.util.validation.ValidPassword;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
