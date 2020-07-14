@@ -1,5 +1,6 @@
 package com.common.security;
 
+import com.common.dao.UserDao;
 import com.common.entity.User;
 import com.common.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,13 @@ import java.util.ArrayList;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userService.findByEmail(username);
+        User user = userDao.findByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

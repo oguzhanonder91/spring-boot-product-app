@@ -3,6 +3,7 @@ package com.common.dao;
 import com.common.dto.UserDto;
 import com.common.entity.User;
 import com.common.exception.BaseException;
+import com.common.exception.BaseNotFoundException;
 import com.common.service.RoleService;
 import com.common.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,23 @@ public class UserDao {
         return user;
     }
 
-    public User create (User user){
+    public User create(final User user) {
         return userService.save(user);
     }
 
     private boolean emailExist(final String email) {
         return userService.findByEmail(email) != null;
+    }
+
+    public User findByEmail(final String email) {
+        User user =  userService.findByEmail(email);
+        if (user == null) {
+            throw new BaseNotFoundException("Not found User");
+        }
+        return user;
+    }
+
+    public User update(User user) {
+        return userService.update(user);
     }
 }

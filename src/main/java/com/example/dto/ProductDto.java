@@ -25,6 +25,7 @@ public class ProductDto {
     @NotNull
     private double sellPrice;
 
+
     private double profit;
 
     public String getTitle() {
