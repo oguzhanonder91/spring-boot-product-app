@@ -8,7 +8,9 @@ import com.common.dto.LoginRequest;
 import com.common.entity.Token;
 import com.common.entity.User;
 import com.common.exception.BaseException;
+import com.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private MessageSource messages;
 
     @PostMapping(value = "/login")
     @ResponseBody
@@ -49,7 +54,7 @@ public class AuthController {
             userDao.update(user);
             tokenDao.deleteRealToken(token);
         }
-        return ResponseEntity.ok("Başarılı Şekilde Çıkış Yapıldı");
+        return ResponseEntity.ok(messages.getMessage("message.logoutSucc", null, httpServletRequest.getLocale()));
     }
 
 

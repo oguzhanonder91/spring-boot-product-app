@@ -35,7 +35,7 @@ public class UserDao {
         user.setEmail(accountDto.getEmail());
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setRoles(Arrays.asList(roleService.findByCode(accountDto.getRoleCode())));
-        user.setEnabled(true);
+       // user.setEnabled(true);
         return user;
     }
 
