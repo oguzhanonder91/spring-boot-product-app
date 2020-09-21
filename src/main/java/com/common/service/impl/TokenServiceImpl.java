@@ -24,4 +24,9 @@ public class TokenServiceImpl extends BaseServiceImpl<Token> implements TokenSer
     public Optional<Token> findByValueAndTokenTypeAndDomain(String token, TokenType tokenType, String domain) {
         return tokenRepository.findByValueAndTokenTypeAndDomain(token, tokenType, domain);
     }
+
+    @Override
+    public void deleteAllByIssuedAtBefore(long issuedDate) {
+        tokenRepository.deleteAllByIssuedAtBefore(issuedDate);
+    }
 }

@@ -30,7 +30,7 @@ public class TokenDao {
         return tokenService.save(token);
     }
 
-    public Token prepareRegistrationAndPassword(String email, TokenType tokenType , HttpServletRequest httpServletRequest) {
+    public Token prepareRegistrationAndPassword(String email, TokenType tokenType, HttpServletRequest httpServletRequest) {
         long issued = new Date().getTime();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(issued);
@@ -55,12 +55,12 @@ public class TokenDao {
         return tokens.size() > 0 ? tokens.get(0) : null;
     }
 
-    public Token controlTokenRegistrationAndPassword(final String tokenParam, final TokenType tokenType,final HttpServletRequest request) {
+    public Token controlTokenRegistrationAndPassword(final String tokenParam, final TokenType tokenType, final HttpServletRequest request) {
         String origin = "";
         if (!StringUtils.isEmpty(request.getHeader("origin"))) {
             origin = request.getHeader("origin");
         }
-        final Optional<Token> token = tokenService.findByValueAndTokenTypeAndDomain(tokenParam,tokenType,origin);
+        final Optional<Token> token = tokenService.findByValueAndTokenTypeAndDomain(tokenParam, tokenType, origin);
         return (Token) token.orElse(null);
     }
 
@@ -68,5 +68,9 @@ public class TokenDao {
         if (validToken != null) {
             tokenService.deleteReal(validToken);
         }
+    }
+
+    public void deleteTokensByIssuedDateBeforeNow(long issuedDate) {
+        tokenService.deleteAllByIssuedAtBefore(issuedDate);
     }
 }
