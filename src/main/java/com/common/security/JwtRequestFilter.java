@@ -38,8 +38,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 String username = jwtTokenUtil.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
-                Token isValid = tokenDao.controlToken(jwt,username, TokenType.AUTH,httpServletRequest);
-                if(userDetails != null && isValid!= null){
+                Token isValid = tokenDao.controlToken(jwt, username, TokenType.AUTH, httpServletRequest);
+                if (userDetails != null && isValid != null) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));

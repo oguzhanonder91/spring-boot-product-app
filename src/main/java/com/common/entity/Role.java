@@ -14,10 +14,10 @@ public class Role extends BaseEntity {
     @JsonIgnore
     private Collection<User> users;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String code;
 
     public Collection<User> getUsers() {

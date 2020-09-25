@@ -1,6 +1,7 @@
 package com.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -13,27 +14,23 @@ import java.util.Date;
 @Where(clause = "entity_state=1")
 public class User extends BaseEntity {
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private String surname;
 
-    @Column
+    @Column(nullable = false)
     @Email
     private String email;
 
-    @Column(length = 60)
+    @Column(length = 60, nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false)
     private boolean enabled;
 
     @ManyToMany
-    @JoinTable(name = "users_roles", joinColumns =
-    @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id",
-                    referencedColumnName = "id"))
     private Collection<Role> roles;
 
     @Column
@@ -45,6 +42,10 @@ public class User extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "EET")
     private Date lastLogoutTime;
+
+    @ManyToMany(mappedBy = "users")
+    @JsonIgnore
+    private Collection<Permission> permissions;
 
 
     public User() {
@@ -116,5 +117,12 @@ public class User extends BaseEntity {
         this.lastLogoutTime = lastLogoutTime;
     }
 
+    public Collection<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Collection<Permission> permissions) {
+        this.permissions = permissions;
+    }
 }
 

@@ -3,6 +3,7 @@ package com.common.configuration;
 
 import com.common.security.JwtAuthenticationEntryPoint;
 import com.common.security.JwtRequestFilter;
+import com.common.security.MyUserDetailsService;
 import com.util.validation.EmailValidator;
 import com.util.validation.PasswordMatchesValidator;
 import com.util.validation.UserValidator;
@@ -35,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
-    private UserDetailsService jwtUserDetailsService;
+    private MyUserDetailsService jwtUserDetailsService;
 
     @Autowired
     private JwtRequestFilter jwtRequestFilter;

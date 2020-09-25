@@ -9,9 +9,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * Created by oguzhanonder - 3.10.2018
- */
 @MappedSuperclass
 public abstract class BaseEntity  implements Serializable{
 
