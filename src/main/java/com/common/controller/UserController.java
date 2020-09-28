@@ -42,7 +42,7 @@ public class UserController {
     @PostMapping(path = "/registration")
     public ResponseEntity<String> registrationNewUser(@Valid @RequestBody final UserDto userDto, HttpServletRequest httpServletRequest) {
         final User user = userDao.registerNewUserAccount(userDto);
-        userDao.create(user);
+        userDao.save(user);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, httpServletRequest);
         tokenDao.create(token);
         final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(CommonUtil.getAppUrl(httpServletRequest), httpServletRequest.getLocale(), token.getValue(), user);

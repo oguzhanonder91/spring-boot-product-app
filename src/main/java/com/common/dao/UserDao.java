@@ -19,7 +19,7 @@ public class UserDao {
     private UserService userService;
 
     @Autowired
-    private RoleService roleService;
+    private RoleDao roleDao;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -34,23 +34,22 @@ public class UserDao {
         user.setSurname(accountDto.getSurname());
         user.setEmail(accountDto.getEmail());
         user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        user.setRoles(Arrays.asList(roleService.findByCode(accountDto.getRoleCode())));
-       // user.setEnabled(true);
+        user.setRoles(Arrays.asList(roleDao.findByCode(accountDto.getRoleCode())));
         return user;
     }
 
-    public User create(final User user) {
+    public User save(final User user) {
         return userService.save(user);
     }
 
-    private boolean emailExist(final String email) {
+    public boolean emailExist(final String email) {
         return userService.findByEmail(email) != null;
     }
 
     public User findByEmail(final String email) {
-        User user =  userService.findByEmail(email);
+        User user = userService.findByEmail(email);
         if (user == null) {
-            throw new BaseNotFoundException("Not found User");
+            throw new BaseNotFoundException("Not found User -> " + email);
         }
         return user;
     }

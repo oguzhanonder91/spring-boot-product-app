@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Where(clause = "entity_state=1")
-public class Menu extends BaseEntity{
+public class Menu extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
@@ -20,10 +20,11 @@ public class Menu extends BaseEntity{
     private int orderItem;
 
     @OneToMany(mappedBy = "parent")
+    @OrderBy("orderItem ASC")
     private List<Menu> children;
 
-    @ManyToOne
-    private Menu parent;
+    @Column
+    private String parent;
 
     public String getName() {
         return name;
@@ -57,11 +58,11 @@ public class Menu extends BaseEntity{
         this.children = children;
     }
 
-    public Menu getParent() {
+    public String getParent() {
         return parent;
     }
 
-    public void setParent(Menu parent) {
+    public void setParent(String parent) {
         this.parent = parent;
     }
 }

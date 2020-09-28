@@ -20,6 +20,13 @@ public class Role extends BaseEntity {
     @Column(nullable = false)
     private String code;
 
+    public Role() {
+    }
+
+    public Role(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
     public Collection<User> getUsers() {
         return users;
     }
