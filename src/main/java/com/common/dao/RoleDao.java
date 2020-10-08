@@ -25,15 +25,15 @@ public class RoleDao {
         return roleService.findByName(name);
     }
 
-    public Role update(Role role){
+    public Role update(Role role) {
         return roleService.update(role);
     }
 
-    public void softDelete(Role role){
-         roleService.softDelete(role);
+    public void softDelete(Role role) {
+        roleService.softDelete(role);
     }
 
-    public List<Role> findAll(){
+    public List<Role> findAll() {
         return roleService.findAll();
     }
 }

@@ -13,11 +13,29 @@ public class Permission extends BaseEntity{
     @Column
     private PermissionType type;
 
+    @Column
+    private String itemId;
+
     @ManyToMany
     private Collection<Role> roles;
 
     @ManyToMany
     private Collection<User> users;
+
+    public Permission(PermissionType type, String itemId, Collection<Role> roles, Collection<User> users) {
+        this.type = type;
+        this.itemId = itemId;
+        this.roles = roles;
+        this.users = users;
+    }
+
+    public Permission() {
+    }
+
+    public Permission(PermissionType type, String itemId) {
+        this.type = type;
+        this.itemId = itemId;
+    }
 
     public PermissionType getType() {
         return type;
@@ -41,5 +59,13 @@ public class Permission extends BaseEntity{
 
     public void setUsers(Collection<User> users) {
         this.users = users;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 }

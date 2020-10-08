@@ -16,6 +16,12 @@ public class Menu extends BaseEntity {
     @Column(nullable = false)
     private String code;
 
+    @Column(nullable = false)
+    private String path;
+
+    @Column
+    private String icon;
+
     @Column
     private int orderItem;
 
@@ -25,6 +31,9 @@ public class Menu extends BaseEntity {
 
     @Column
     private String parent;
+
+    @Transient
+    private List<String> roleCodes;
 
     public String getName() {
         return name;
@@ -64,5 +73,29 @@ public class Menu extends BaseEntity {
 
     public void setParent(String parent) {
         this.parent = parent;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public List<String> getRoleCodes() {
+        return roleCodes;
+    }
+
+    public void setRoleCodes(List<String> roleCodes) {
+        this.roleCodes = roleCodes;
     }
 }

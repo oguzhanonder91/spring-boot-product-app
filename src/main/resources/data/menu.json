@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Dashboard",
+    "code": "dashboard",
+    "orderItem": 0,
+    "path": "/dashboard",
+    "icon": "cil-speedometer",
+    "roleCodes": [
+      "ADMIN",
+      "USER"
+    ]
+  },
+  {
+    "name": "Ürün Yönetimi",
+    "code": "product",
+    "orderItem": 1,
+    "path": "/product",
+    "icon": "cil-puzzle",
+    "roleCodes": [
+      "ADMIN",
+      "USER"
+    ],
+    "children": [
+      {
+        "name": "Ürün Listesi",
+        "code": "ProductPurchase",
+        "path": "/product/purchase",
+        "orderItem": 0,
+        "roleCodes": [
+          "ADMIN",
+          "USER"
+        ]
+      },
+      {
+        "name": "Ürün Çıkışı",
+        "code": "ProductSell",
+        "path": "/product/sell",
+        "orderItem": 1,
+        "roleCodes": [
+          "ADMIN"
+        ]
+      }
+    ]
+  }
+]
+
+
+
+
+
+
+
+

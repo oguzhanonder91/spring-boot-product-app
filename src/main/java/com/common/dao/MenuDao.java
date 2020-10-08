@@ -32,4 +32,12 @@ public class MenuDao {
     public List<Menu> getAllByParentNull() {
         return menuService.getAllByParentNull();
     }
+
+    public Menu findByCode(String code) {
+        return menuService.findByCode(code).orElse(null);
+    }
+
+    public List<Menu> getMenusOfUser(List<String> ids) {
+        return menuService.findByParentNullAndIdIn(ids);
+    }
 }

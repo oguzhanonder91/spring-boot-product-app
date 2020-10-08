@@ -9,4 +9,5 @@ public interface RoleRepository extends BaseRepository<Role> {
     Role findByName(final String name);
 
     Role findByCode(final String code);
+
 }

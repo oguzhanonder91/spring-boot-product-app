@@ -2,8 +2,8 @@ package com.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.util.enums.EntityState;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.LastModifiedBy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -43,11 +43,6 @@ public abstract class BaseEntity  implements Serializable{
     @Column(name="entity_state")
     @JsonIgnore
     private EntityState entityState;
-
-    public enum EntityState {
-        PASSIVE,
-        ACTIVE
-    }
 
     public BaseEntity() {
     }

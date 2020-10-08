@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -25,6 +26,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(length = 60, nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -46,6 +48,9 @@ public class User extends BaseEntity {
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
     private Collection<Permission> permissions;
+
+    @Transient
+    private List<Menu> menus;
 
 
     public User() {
@@ -123,6 +128,14 @@ public class User extends BaseEntity {
 
     public void setPermissions(Collection<Permission> permissions) {
         this.permissions = permissions;
+    }
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<Menu> menus) {
+        this.menus = menus;
     }
 }
 

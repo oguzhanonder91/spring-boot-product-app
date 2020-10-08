@@ -8,7 +8,9 @@ import com.common.dto.LoginRequest;
 import com.common.entity.Token;
 import com.common.entity.User;
 import com.common.exception.BaseException;
-import com.util.CommonUtil;
+import com.util.annotations.MyServiceAnnotation;
+import com.util.annotations.MyServiceGroupAnnotation;
+import com.util.enums.MethodType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("auth")
+@MyServiceGroupAnnotation(name = "Kimlik Doğrulama",path = "auth")
 public class AuthController {
 
     @Autowired
@@ -34,6 +37,7 @@ public class AuthController {
     private MessageSource messages;
 
     @PostMapping(value = "/login")
+    @MyServiceAnnotation(name = "Login", path = "/login", type = MethodType.POST, permissionRoles = {"ADMIN","USER"})
     @ResponseBody
     public ResponseEntity<?> login(@RequestBody final LoginRequest loginRequest, HttpServletRequest httpServletRequest) throws BaseException {
         Token token = authDao.loginAttempt(loginRequest, httpServletRequest);
@@ -45,6 +49,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/logout")
+    @MyServiceAnnotation(name = "Logout", path = "/logout", type = MethodType.POST, permissionRoles = {"ADMIN","USER"})
     @ResponseBody
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) throws BaseException {
         Token token = authDao.logoutAttempt(httpServletRequest);
