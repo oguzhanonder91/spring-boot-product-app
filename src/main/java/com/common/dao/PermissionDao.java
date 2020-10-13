@@ -1,6 +1,7 @@
 package com.common.dao;
 
 import com.common.entity.Permission;
+import com.common.entity.Role;
 import com.common.service.PermissionService;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,9 @@ public class PermissionDao {
 
     public List<Permission> findByTypeAndRolesInCode(PermissionType permissionType, List<String> codes) {
         return permissionService.findByTypeAndRoles_CodeIn(permissionType, codes);
+    }
+
+    public List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles) {
+        return permissionService.findByItemIdAndTypeAndRolesIn(item,permissionType,roles);
     }
 }

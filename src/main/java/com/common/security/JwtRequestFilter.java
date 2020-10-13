@@ -1,7 +1,7 @@
 package com.common.security;
 
 import com.common.dao.TokenDao;
-import com.common.entity.Token;
+import com.common.entity.*;
 import com.util.JwtTokenUtil;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
 
@@ -54,5 +53,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
-
 }
+

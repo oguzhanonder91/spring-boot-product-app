@@ -1,6 +1,7 @@
 package com.common.repository;
 
 import com.common.entity.Permission;
+import com.common.entity.Role;
 import com.util.enums.PermissionType;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,7 @@ public interface PermissionRepository extends BaseRepository<Permission> {
     Optional<Permission> findByItemIdAndTypeAndRoles_Code(String item, PermissionType permissionType, String code);
 
     List<Permission> findByTypeAndRoles_CodeIn(PermissionType permissionType, List<String> code);
+
+    List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles);
+
 }

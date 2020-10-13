@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean enabled;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
 
     @Column

@@ -38,6 +38,12 @@ public class MenuDao {
     }
 
     public List<Menu> getMenusOfUser(List<String> ids) {
-        return menuService.findByParentNullAndIdIn(ids);
+        List<Menu> menus = menuService.findByParentNullAndIdIn(ids);
+        for (Menu menu : menus) {
+            if (menu.getChildren() != null) {
+                menu.getChildren().removeIf(p -> !ids.contains(p.getId()));
+            }
+        }
+        return menus;
     }
 }

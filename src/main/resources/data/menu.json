@@ -1,7 +1,7 @@
 [
   {
     "name": "Dashboard",
-    "code": "dashboard",
+    "code": "Dashboard",
     "orderItem": 0,
     "path": "/dashboard",
     "icon": "cil-speedometer",
@@ -12,7 +12,7 @@
   },
   {
     "name": "Ürün Yönetimi",
-    "code": "product",
+    "code": "Product",
     "orderItem": 1,
     "path": "/product",
     "icon": "cil-puzzle",

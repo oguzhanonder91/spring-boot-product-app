@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,6 +20,9 @@ public class EmailUtil {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Value( "${mail.baseUrl}" )
     private String mailBaseUrl;
@@ -50,5 +54,9 @@ public class EmailUtil {
         email.setTo(user.getEmail());
         email.setFrom(env.getProperty("support.email"));
         return email;
+    }
+
+    public void sendEmail(SimpleMailMessage simpleMailMessage) {
+        mailSender.send(simpleMailMessage);
     }
 }

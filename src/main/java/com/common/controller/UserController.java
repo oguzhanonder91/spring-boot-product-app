@@ -18,6 +18,7 @@ import com.util.enums.MethodType;
 import com.util.enums.PermissionType;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,9 +46,6 @@ public class UserController {
 
     @Autowired
     private EmailUtil emailUtil;
-
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     private MessageSource messages;
@@ -69,7 +68,7 @@ public class UserController {
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, httpServletRequest);
         tokenDao.create(token);
         final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(CommonUtil.getAppUrl(httpServletRequest), httpServletRequest.getLocale(), token.getValue(), user);
-        mailSender.send(mailMessage);
+        emailUtil.sendEmail(mailMessage);
         String message = messages.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

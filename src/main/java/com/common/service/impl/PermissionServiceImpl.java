@@ -1,6 +1,7 @@
 package com.common.service.impl;
 
 import com.common.entity.Permission;
+import com.common.entity.Role;
 import com.common.repository.PermissionRepository;
 import com.common.service.PermissionService;
 import com.util.enums.PermissionType;
@@ -34,5 +35,10 @@ public class PermissionServiceImpl extends BaseServiceImpl<Permission> implement
     @Override
     public List<Permission> findByTypeAndRoles_CodeIn(PermissionType permissionType, List<String> codes) {
         return permissionRepository.findByTypeAndRoles_CodeIn(permissionType, codes);
+    }
+
+    @Override
+    public List<Permission> findByItemIdAndTypeAndRolesIn(String item, PermissionType permissionType, List<Role> roles) {
+        return permissionRepository.findByItemIdAndTypeAndRolesIn(item, permissionType, roles);
     }
 }
