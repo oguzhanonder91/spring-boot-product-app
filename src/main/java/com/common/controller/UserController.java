@@ -5,10 +5,7 @@ import com.common.dao.PermissionDao;
 import com.common.dao.TokenDao;
 import com.common.dao.UserDao;
 import com.common.dto.UserDto;
-import com.common.entity.Menu;
-import com.common.entity.Permission;
-import com.common.entity.Token;
-import com.common.entity.User;
+import com.common.entity.*;
 import com.util.CommonUtil;
 import com.util.EmailUtil;
 import com.util.SecurityUtil;
@@ -18,19 +15,16 @@ import com.util.enums.MethodType;
 import com.util.enums.PermissionType;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,7 +42,7 @@ public class UserController {
     private EmailUtil emailUtil;
 
     @Autowired
-    private MessageSource messages;
+    private MessageSource messageSource;
 
     @Autowired
     private PermissionDao permissionDao;
@@ -69,7 +63,7 @@ public class UserController {
         tokenDao.create(token);
         final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(CommonUtil.getAppUrl(httpServletRequest), httpServletRequest.getLocale(), token.getValue(), user);
         emailUtil.sendEmail(mailMessage);
-        String message = messages.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
+        String message = messageSource.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -78,29 +72,26 @@ public class UserController {
     public ResponseEntity<String> confirmRegistration(HttpServletRequest httpServletRequest, @PathVariable String paramToken) {
         Token token = tokenDao.controlTokenRegistrationAndPassword(paramToken, TokenType.REGISTRATION, httpServletRequest);
         if (token == null) {
-            return new ResponseEntity<>(messages.getMessage("auth.message.invalidToken", null, httpServletRequest.getLocale()), HttpStatus.OK);
+            return new ResponseEntity<>(messageSource.getMessage("auth.message.invalidToken", null, httpServletRequest.getLocale()), HttpStatus.OK);
         }
 
         Calendar cal = Calendar.getInstance();
         if ((token.getExpiry() - cal.getTimeInMillis()) <= 0) {
             tokenDao.deleteRealToken(token);
-            return new ResponseEntity<>(messages.getMessage("auth.message.expired", null, httpServletRequest.getLocale()), HttpStatus.OK);
+            return new ResponseEntity<>(messageSource.getMessage("auth.message.expired", null, httpServletRequest.getLocale()), HttpStatus.OK);
         }
 
         User user = userDao.findByEmail(token.getEmail());
         user.setEnabled(true);
         userDao.update(user);
-        return new ResponseEntity<>(messages.getMessage("message.accountVerified", null, httpServletRequest.getLocale()), HttpStatus.OK);
+        return new ResponseEntity<>(messageSource.getMessage("message.accountVerified", null, httpServletRequest.getLocale()), HttpStatus.OK);
     }
 
     @GetMapping(path = "/menus")
     @MyServiceAnnotation(name = "Kullanıcı Menülerini Listele", path = "/menus", type = MethodType.GET, permissionRoles = {"ADMIN", "USER"})
     public ResponseEntity<User> getUserAndMenus() {
         User user = userDao.findByEmail(securityUtil.getCurrentAuditor());
-        List<String> roleCodes = user.getRoles().stream()
-                .map(p -> p.getCode())
-                .collect(Collectors.toList());
-        List<Permission> permissions = permissionDao.findByTypeAndRolesInCode(PermissionType.MENU, roleCodes);
+        List<Permission> permissions = permissionDao.findByTypeAndRolesIn(PermissionType.MENU, (List<Role>) user.getRoles());
         List<String> menuIds = permissions.stream()
                 .map(p -> p.getItemId())
                 .collect(Collectors.toList());

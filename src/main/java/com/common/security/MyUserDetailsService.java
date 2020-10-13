@@ -2,7 +2,6 @@ package com.common.security;
 
 import com.common.dao.UserDao;
 import com.common.entity.User;
-import com.common.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

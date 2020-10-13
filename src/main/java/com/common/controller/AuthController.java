@@ -34,7 +34,7 @@ public class AuthController {
     private UserDao userDao;
 
     @Autowired
-    private MessageSource messages;
+    private MessageSource messageSource;
 
     @PostMapping(value = "/login")
     @MyServiceAnnotation(name = "Login", path = "/login", type = MethodType.POST, permissionRoles = {"ADMIN","USER"})
@@ -59,7 +59,7 @@ public class AuthController {
             userDao.update(user);
             tokenDao.deleteRealToken(token);
         }
-        return ResponseEntity.ok(messages.getMessage("message.logoutSucc", null, httpServletRequest.getLocale()));
+        return ResponseEntity.ok(messageSource.getMessage("message.logoutSucc", null, httpServletRequest.getLocale()));
     }
 
 

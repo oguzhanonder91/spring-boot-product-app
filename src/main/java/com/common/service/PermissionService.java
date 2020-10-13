@@ -18,4 +18,6 @@ public interface PermissionService extends BaseService<Permission> {
 
     List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles);
 
+    List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles);
+
 }

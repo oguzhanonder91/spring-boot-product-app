@@ -20,4 +20,7 @@ public interface PermissionRepository extends BaseRepository<Permission> {
 
     List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles);
 
+    List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles);
+
+
 }

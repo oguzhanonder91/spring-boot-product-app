@@ -41,4 +41,9 @@ public class PermissionServiceImpl extends BaseServiceImpl<Permission> implement
     public List<Permission> findByItemIdAndTypeAndRolesIn(String item, PermissionType permissionType, List<Role> roles) {
         return permissionRepository.findByItemIdAndTypeAndRolesIn(item, permissionType, roles);
     }
+
+    @Override
+    public List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles) {
+        return permissionRepository.findByTypeAndRolesIn(permissionType, roles);
+    }
 }

@@ -42,4 +42,8 @@ public class PermissionDao {
     public List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles) {
         return permissionService.findByItemIdAndTypeAndRolesIn(item,permissionType,roles);
     }
+
+    public List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles) {
+        return permissionService.findByTypeAndRolesIn(permissionType, roles);
+    }
 }

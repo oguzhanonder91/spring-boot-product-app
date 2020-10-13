@@ -16,7 +16,7 @@ import java.util.Locale;
 public class EmailUtil {
 
     @Autowired
-    private MessageSource messages;
+    private MessageSource messageSource;
 
     @Autowired
     private Environment env;
@@ -31,19 +31,19 @@ public class EmailUtil {
 
     public SimpleMailMessage constructResendRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
         String url = contextPath + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
-        String message = messages.getMessage("message.resendToken", null, locale);
+        String message = messageSource.getMessage("message.resendToken", null, locale);
         return constructEmail("Resend Registration Token", message + " \r\n" + url, user);
     }
 
     public SimpleMailMessage constructResetPasswordTokenEmail(String contextPath, Locale locale, String token, User user) {
         String url = contextPath + File.separator + "user" + File.separator + "changePassword" + File.separator + user.getId() + File.separator + token;
-        String message = messages.getMessage("message.resetPassword", null, locale);
+        String message = messageSource.getMessage("message.resetPassword", null, locale);
         return constructEmail("Reset Password", message + " \r\n" + url, user);
     }
 
     public SimpleMailMessage constructRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
         String url = mailBaseUrl + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
-        String message = messages.getMessage("message.regSucc", null, locale);
+        String message = messageSource.getMessage("message.regSucc", null, locale);
         return constructEmail("Registration Confirmation", message + " \r\n" + url, user);
     }
 
