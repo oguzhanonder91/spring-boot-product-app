@@ -39,7 +39,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/{id}")
-    @MyServiceAnnotation(name = "İd ye Göre Ürün Listeleme", path = "/{}", type = MethodType.GET, permissionRoles = {"ADMIN","USER"})
+    @MyServiceAnnotation(name = "İd ye Göre Ürün", path = "/{}", type = MethodType.GET, permissionRoles = {"ADMIN","USER"})
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         final Optional<Product> product = productDao.findById(id);
         return new ResponseEntity<>(product.get(), HttpStatus.OK);

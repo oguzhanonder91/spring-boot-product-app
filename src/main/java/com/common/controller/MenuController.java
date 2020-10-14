@@ -1,12 +1,10 @@
 package com.common.controller;
 
 import com.common.dao.MenuDao;
-import com.common.dao.PermissionDao;
 import com.common.entity.Menu;
 import com.util.annotations.MyServiceAnnotation;
 import com.util.annotations.MyServiceGroupAnnotation;
 import com.util.enums.MethodType;
-import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +21,6 @@ public class MenuController {
 
     @Autowired
     private MenuDao menuDao;
-
-    @Autowired
-    private PermissionDao permissionDao;
 
     @GetMapping(path = "/all")
     @MyServiceAnnotation(name = "Menü Listeleme", path = "/all", type = MethodType.GET, permissionRoles = {"ADMIN","USER"})

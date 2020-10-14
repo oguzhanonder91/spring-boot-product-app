@@ -32,7 +32,7 @@ public class WebSecurity {
 
     public boolean check(Authentication authentication, HttpServletRequest request) {
 
-        String username = ((UserDetails)authentication.getPrincipal()).getUsername();
+        String username = authentication.getPrincipal() instanceof UserDetails ? ((UserDetails) authentication.getPrincipal()).getUsername() : authentication.getPrincipal().toString();
         String url = request.getRequestURI();
         Service service = serviceDao.findByPathAndMethod(url.substring(1), MethodType.valueOf(request.getMethod()));
         if (service != null) {
@@ -40,7 +40,7 @@ public class WebSecurity {
             List<Role> roles = new ArrayList<>(user.getRoles());
             List<Permission> permissions = permissionDao.findByItemIdAndTypeAndRolesIn(service.getId(), PermissionType.SERVICE, roles);
             if (permissions == null || permissions.isEmpty()) {
-                return  false;
+                return false;
             }
 
         }
