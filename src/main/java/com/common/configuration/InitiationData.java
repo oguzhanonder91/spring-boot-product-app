@@ -9,6 +9,7 @@ import com.util.annotations.MyServiceGroupAnnotation;
 import com.util.enums.MethodType;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -25,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,6 +52,9 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
 
     @Autowired
     private PermissionDao permissionDao;
+
+    @Value("${scanPackage}")
+    private String SCAN_PACKAGE;
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent applicationReadyEvent) {
@@ -163,22 +168,23 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(MyServiceGroupAnnotation.class));
 
+        Set<BeanDefinition> beanDefinitionSet = scanner.findCandidateComponents(SCAN_PACKAGE);
         List<String> willDeleteServiceGroups = new ArrayList<>();
         List<String> willDeleteServices = new ArrayList<>();
 
         try {
-            for (BeanDefinition bd : scanner.findCandidateComponents("com")) {
+            for (BeanDefinition bd : beanDefinitionSet) {
                 Class clazz = Class.forName(bd.getBeanClassName());
                 MyServiceGroupAnnotation annotation = (MyServiceGroupAnnotation) clazz.getAnnotation(MyServiceGroupAnnotation.class);
-                willDeleteServiceGroups.add(annotation.path());
-                ServiceGroup serviceGroup = controlServiceGroup(annotation.path(), annotation.name());
+                willDeleteServiceGroups.add(clazz.getName());
+                ServiceGroup serviceGroup = controlServiceGroup(clazz.getName(), annotation.path(), annotation.name());
                 Method[] methods = ReflectionUtils.getDeclaredMethods(clazz);
                 for (Method method : methods) {
                     MyServiceAnnotation myServiceAnnotation = method.getAnnotation(MyServiceAnnotation.class);
                     if (myServiceAnnotation != null) {
-                        willDeleteServices.add(annotation.path() + myServiceAnnotation.path());
+                        willDeleteServices.add(method.toGenericString());
                         if (serviceGroup != null) {
-                            Service service = controlService(myServiceAnnotation.path(), myServiceAnnotation.type(), myServiceAnnotation.name(), serviceGroup);
+                            Service service = controlService(method.toGenericString(), myServiceAnnotation.path(), myServiceAnnotation.type(), myServiceAnnotation.name(), serviceGroup);
                             if (service != null) {
                                 permissionSaveService(service.getId(), PermissionType.SERVICE, myServiceAnnotation.permissionRoles());
                             }
@@ -197,13 +203,13 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         deleteServiceGroup(willDeleteServiceGroups);
     }
 
-    private void deleteServiceGroup(List<String> paths) {
-        List<ServiceGroup> serviceGroups = serviceGroupDao.findByPathNotIn(paths);
+    private void deleteServiceGroup(List<String> keys) {
+        List<ServiceGroup> serviceGroups = serviceGroupDao.findByKeyNotIn(keys);
         serviceGroupDao.realDeleteAll(serviceGroups);
     }
 
-    private void deleteServiceAndPermissions(List<String> paths) {
-        List<Service> services = serviceDao.findByPathNotIn(paths);
+    private void deleteServiceAndPermissions(List<String> keys) {
+        List<Service> services = serviceDao.findByKeyNotIn(keys);
         List<String> ids = services.stream()
                 .map(p -> p.getId())
                 .collect(Collectors.toList());
@@ -212,17 +218,17 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         serviceDao.realDeleteAll(services);
     }
 
-    private ServiceGroup controlServiceGroup(String path, String name) {
-        if (serviceGroupDao.findByPath(path) == null) {
-            ServiceGroup serviceGroup = new ServiceGroup(path, name);
+    private ServiceGroup controlServiceGroup(String key, String path, String name) {
+        if (serviceGroupDao.findByKeyAndPath(key, path) == null) {
+            ServiceGroup serviceGroup = new ServiceGroup(path, name, key);
             return serviceGroupDao.save(serviceGroup);
         }
         return null;
     }
 
-    private Service controlService(String path, MethodType methodType, String name, ServiceGroup serviceGroup) {
-        if (serviceDao.findByPathAndMethod(serviceGroup.getPath() + path, methodType) == null) {
-            Service service = new Service(serviceGroup.getPath() + path, methodType, name, serviceGroup);
+    private Service controlService(String key, String path, MethodType methodType, String name, ServiceGroup serviceGroup) {
+        if (serviceDao.findByKeyAndMethod(key, methodType) == null) {
+            Service service = new Service(serviceGroup.getPath() + path, key, methodType, name, serviceGroup);
             return serviceDao.save(service);
         }
         return null;

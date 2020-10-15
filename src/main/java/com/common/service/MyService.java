@@ -11,4 +11,8 @@ public interface MyService extends BaseService<Service> {
 
     List<Service> findByPathNotIn(List<String> paths);
 
+    List<Service> findByKeyNotIn(List<String> keys);
+
+    Optional<Service> findByKeyAndMethod(String key, MethodType methodType);
+
 }

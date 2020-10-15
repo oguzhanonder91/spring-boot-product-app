@@ -11,4 +11,8 @@ public interface ServiceGroupRepository extends BaseRepository<ServiceGroup> {
     Optional<ServiceGroup> findByPath(String path);
 
     List<ServiceGroup> findByPathNotIn(List<String> paths);
+
+    List<ServiceGroup> findByServiceGroupKeyNotIn(List<String> key);
+
+    Optional<ServiceGroup> findByServiceGroupKeyAndPath(String key,String path);
 }

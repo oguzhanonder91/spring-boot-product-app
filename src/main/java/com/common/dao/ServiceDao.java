@@ -29,4 +29,12 @@ public class ServiceDao {
     public void realDeleteAll(List<Service> services) {
         myService.realDeleteAll(services);
     }
+
+    public List<Service> findByKeyNotIn(List<String> keys) {
+        return myService.findByKeyNotIn(keys);
+    }
+
+    public Service findByKeyAndMethod(String key, MethodType methodType) {
+        return myService.findByKeyAndMethod(key, methodType).orElse(null);
+    }
 }

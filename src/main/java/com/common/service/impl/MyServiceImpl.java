@@ -23,4 +23,14 @@ public class MyServiceImpl extends BaseServiceImpl<com.common.entity.Service> im
     public List<com.common.entity.Service> findByPathNotIn(List<String> paths) {
         return serviceRepository.findByPathNotIn(paths);
     }
+
+    @Override
+    public List<com.common.entity.Service> findByKeyNotIn(List<String> keys) {
+        return serviceRepository.findByServiceKeyNotIn(keys);
+    }
+
+    @Override
+    public Optional<com.common.entity.Service> findByKeyAndMethod(String key, MethodType methodType) {
+        return serviceRepository.findByServiceKeyAndMethod(key, methodType);
+    }
 }

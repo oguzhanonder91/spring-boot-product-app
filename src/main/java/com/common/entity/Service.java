@@ -18,13 +18,24 @@ public class Service extends BaseEntity {
     private MethodType method;
 
     @Column
-    private String name ;
+    private String name;
+
+    @Column
+    private String serviceKey;
 
     @ManyToOne
     private ServiceGroup serviceGroup;
 
     public Service(String path, MethodType method, String name, ServiceGroup serviceGroup) {
         this.path = path;
+        this.method = method;
+        this.name = name;
+        this.serviceGroup = serviceGroup;
+    }
+
+    public Service(String path, String key, MethodType method, String name, ServiceGroup serviceGroup) {
+        this.path = path;
+        this.serviceKey = key;
         this.method = method;
         this.name = name;
         this.serviceGroup = serviceGroup;
@@ -63,5 +74,13 @@ public class Service extends BaseEntity {
 
     public void setServiceGroup(ServiceGroup serviceGroup) {
         this.serviceGroup = serviceGroup;
+    }
+
+    public String getServiceKey() {
+        return serviceKey;
+    }
+
+    public void setServiceKey(String serviceKey) {
+        this.serviceKey = serviceKey;
     }
 }

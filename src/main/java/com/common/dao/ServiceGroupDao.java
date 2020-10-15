@@ -28,4 +28,13 @@ public class ServiceGroupDao {
     public void realDeleteAll(List<ServiceGroup> serviceGroups) {
         serviceGroupService.realDeleteAll(serviceGroups);
     }
+
+    public List<ServiceGroup> findByKeyNotIn(List<String> keys) {
+        return serviceGroupService.findByKeyNotIn(keys);
+    }
+
+    public ServiceGroup findByKeyAndPath(String key,String path) {
+        return serviceGroupService.findByKeyAndPath(key,path).orElse(null);
+    }
+
 }

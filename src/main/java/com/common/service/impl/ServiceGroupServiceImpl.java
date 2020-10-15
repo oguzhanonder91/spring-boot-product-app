@@ -25,4 +25,13 @@ public class ServiceGroupServiceImpl extends BaseServiceImpl<ServiceGroup> imple
         return serviceGroupRepository.findByPathNotIn(paths);
     }
 
+    @Override
+    public List<ServiceGroup> findByKeyNotIn(List<String> keys) {
+        return serviceGroupRepository.findByServiceGroupKeyNotIn(keys);
+    }
+
+    @Override
+    public Optional<ServiceGroup> findByKeyAndPath(String key, String path) {
+        return serviceGroupRepository.findByServiceGroupKeyAndPath(key, path);
+    }
 }
