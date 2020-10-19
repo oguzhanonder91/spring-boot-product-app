@@ -1,7 +1,5 @@
 package com.util;
 
-import org.springframework.stereotype.Component;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class CommonUtil {

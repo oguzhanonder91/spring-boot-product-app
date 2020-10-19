@@ -7,6 +7,7 @@ import com.common.entity.Permission;
 import com.common.entity.Role;
 import com.common.entity.Service;
 import com.common.entity.User;
+import com.util.SecurityUtil;
 import com.util.enums.MethodType;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class WebSecurity {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @Autowired
     private RequestMappingHandlerMapping mappingHandler;
@@ -40,7 +43,7 @@ public class WebSecurity {
 
         try {
             HandlerMethod handlerMethod = (HandlerMethod) mappingHandler.getHandler(request).getHandler();
-            String key = handlerMethod.getMethod().toGenericString();
+            String key = securityUtil.encode(handlerMethod.getMethod().toGenericString());
             MethodType methodType = MethodType.valueOf(request.getMethod());
             String username = authentication.getPrincipal() instanceof UserDetails ? ((UserDetails) authentication.getPrincipal()).getUsername() : authentication.getPrincipal().toString();
             Service service = serviceDao.findByKeyAndMethod(key, methodType);

@@ -33,14 +33,14 @@ public class SecurityUtil {
         Annotation annotation = decodeObj.getClass().getAnnotation(Decode.class);
         if (annotation != null) {
             for (String a : ((Decode) annotation).methods()) {
-                String [] arr  = a.split("-");
+                String[] arr = a.split("-");
                 String method = arr[0];
                 String fieldName = arr[1];
                 Field field = ReflectionUtils.findField(decodeObj.getClass(), fieldName);
                 try {
                     Method getMethod = decodeObj.getClass().getDeclaredMethod("get" + method);
                     Object o = getMethod.invoke(decodeObj);
-                    byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString((String)o));
+                    byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString((String) o));
                     String decodeStr = new String(decode).split(split)[0];
                     Method setMethod = decodeObj.getClass().getDeclaredMethod("set" + method, field.getType());
                     setMethod.invoke(decodeObj, decodeStr);
@@ -55,5 +55,9 @@ public class SecurityUtil {
     public String decode(String param) {
         byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString(param));
         return new String(decode).split(split)[0];
+    }
+
+    public String encode(String param) {
+        return Base64Utils.encodeToString(param.getBytes());
     }
 }

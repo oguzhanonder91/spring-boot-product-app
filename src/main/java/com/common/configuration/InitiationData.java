@@ -4,6 +4,7 @@ import com.common.dao.*;
 import com.common.entity.*;
 import com.common.exception.BaseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.util.SecurityUtil;
 import com.util.annotations.MyServiceAnnotation;
 import com.util.annotations.MyServiceGroupAnnotation;
 import com.util.enums.MethodType;
@@ -52,6 +53,9 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
 
     @Autowired
     private PermissionDao permissionDao;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @Value("${scanPackage}")
     private String SCAN_PACKAGE;
@@ -176,19 +180,20 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
             for (BeanDefinition bd : beanDefinitionSet) {
                 Class clazz = Class.forName(bd.getBeanClassName());
                 MyServiceGroupAnnotation annotation = (MyServiceGroupAnnotation) clazz.getAnnotation(MyServiceGroupAnnotation.class);
-                willDeleteServiceGroups.add(clazz.getName());
-                ServiceGroup serviceGroup = controlServiceGroup(clazz.getName(), annotation.path(), annotation.name());
+                String className = securityUtil.encode(clazz.getName());
+                willDeleteServiceGroups.add(className);
+                ServiceGroup serviceGroup = controlServiceGroup(className, annotation.path(), annotation.name());
                 Method[] methods = ReflectionUtils.getDeclaredMethods(clazz);
                 for (Method method : methods) {
                     MyServiceAnnotation myServiceAnnotation = method.getAnnotation(MyServiceAnnotation.class);
                     if (myServiceAnnotation != null) {
-                        willDeleteServices.add(method.toGenericString());
+                        String methodName = securityUtil.encode(method.toGenericString());
+                        willDeleteServices.add(methodName);
                         if (serviceGroup != null) {
-                            Service service = controlService(method.toGenericString(), myServiceAnnotation.path(), myServiceAnnotation.type(), myServiceAnnotation.name(), serviceGroup);
+                            Service service = controlService(methodName, myServiceAnnotation.path(), myServiceAnnotation.type(), myServiceAnnotation.name(), serviceGroup);
                             if (service != null) {
                                 permissionSaveService(service.getId(), PermissionType.SERVICE, myServiceAnnotation.permissionRoles());
                             }
-
                         }
                     }
 

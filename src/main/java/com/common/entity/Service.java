@@ -20,7 +20,7 @@ public class Service extends BaseEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition="LONGTEXT")
     private String serviceKey;
 
     @ManyToOne

@@ -15,7 +15,7 @@ public class ServiceGroup extends BaseEntity {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition="LONGTEXT")
     private String serviceGroupKey;
 
     public ServiceGroup(String path, String name) {
