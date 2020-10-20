@@ -37,12 +37,12 @@ public class WebSecurity {
     private SecurityUtil securityUtil;
 
     @Autowired
-    private RequestMappingHandlerMapping mappingHandler;
+    private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     public boolean check(Authentication authentication, HttpServletRequest request) {
 
         try {
-            HandlerMethod handlerMethod = (HandlerMethod) mappingHandler.getHandler(request).getHandler();
+            HandlerMethod handlerMethod = (HandlerMethod) requestMappingHandlerMapping.getHandler(request).getHandler();
             String key = securityUtil.encode(handlerMethod.getMethod().toGenericString());
             MethodType methodType = MethodType.valueOf(request.getMethod());
             String username = authentication.getPrincipal() instanceof UserDetails ? ((UserDetails) authentication.getPrincipal()).getUsername() : authentication.getPrincipal().toString();
