@@ -16,7 +16,7 @@ public class TokenJob {
     @Autowired
     private TokenDao tokenDao;
 
-    @Scheduled(cron = "${purge.cron.expression}")
+    @Scheduled(cron = "#{@caboryaConfig.service.expiredTokenDeleteCronExpression}")
     public void purgeExpired() {
         Date now = Date.from(Instant.now());
         tokenDao.deleteTokensByIssuedDateBeforeNow(now.getTime());

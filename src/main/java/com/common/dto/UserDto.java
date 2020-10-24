@@ -1,6 +1,5 @@
 package com.common.dto;
 
-import com.util.annotations.Decode;
 import com.util.validation.PasswordMatches;
 import com.util.validation.ValidEmail;
 import com.util.validation.ValidPassword;
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @PasswordMatches
-@Decode(methods = {"Password-password", "MatchingPassword-matchingPassword"})
 public class UserDto {
 
     @NotNull

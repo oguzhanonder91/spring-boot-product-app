@@ -47,7 +47,7 @@ public class WebSecurity {
             MethodType methodType = MethodType.valueOf(request.getMethod());
             String username = authentication.getPrincipal() instanceof UserDetails ? ((UserDetails) authentication.getPrincipal()).getUsername() : authentication.getPrincipal().toString();
             Service service = serviceDao.findByKeyAndMethod(key, methodType);
-            if (service != null) {
+            if (service != null && securityUtil.isAuthenticated(authentication)) {
                 User user = userDao.findByEmail(username);
                 List<Role> roles = new ArrayList<>(user.getRoles());
                 List<Permission> permissions = permissionDao.findByItemIdAndTypeAndRolesIn(service.getId(), PermissionType.SERVICE, roles);

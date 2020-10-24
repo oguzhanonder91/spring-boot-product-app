@@ -1,36 +1,59 @@
 package com.util;
 
+import com.common.configuration.CaboryaConfig;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtTokenUtil implements InitializingBean {
 
-    private static final long serialVersionUID = -2550185165626007488L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    @Autowired
+    private CaboryaConfig caboryaConfig;
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
+    private Key key;
 
-    Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Override
+    public void afterPropertiesSet() {
+        byte[] keyBytes;
+        try {
+            String secret = caboryaConfig.getSecurity().getSecret();
+            if (!StringUtils.isEmpty(secret)) {
+                LOGGER.warn("Warning: the JWT key used is not Base64-encoded. " +
+                        "We recommend using the `caborya.security.base64-secret` key for optimum security.");
+                keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+            } else {
+                LOGGER.debug("Using a Base64-encoded JWT secret key");
+                keyBytes = Decoders.BASE64.decode(caboryaConfig.getSecurity().getBase64Secret());
+            }
+            this.key = Keys.hmacShaKeyFor(keyBytes);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 
     public String generateJwtToken(UserDetails userDetails) {
         long issueDate = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject((userDetails.getUsername()))
                 .setIssuedAt(new Date(issueDate))
-                .setExpiration(new Date(issueDate + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(key)
+                .setExpiration(new Date(issueDate + caboryaConfig.getSecurity().getTokenValidity() * 1000))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -50,16 +73,16 @@ public class JwtTokenUtil implements Serializable {
         try {
             Jwts.parser().setSigningKey(key).parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (SecurityException e) {
+            LOGGER.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
+            LOGGER.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
+            LOGGER.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
+            LOGGER.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+            LOGGER.error("JWT claims string is empty: {}", e.getMessage());
         }
 
         return false;

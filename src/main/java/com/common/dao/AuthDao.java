@@ -67,7 +67,8 @@ public class AuthDao {
         Token newTokenObj = new Token()
                 .value(token)
                 .email(userDetails.getUsername())
-                .tokenType(TokenType.AUTH).expiry(expiry)
+                .tokenType(TokenType.AUTH)
+                .expiry(expiry)
                 .issuedAt(issuedAt);
         Token tokenObj = tokenDao.tokenPrepare(newTokenObj, httpServletRequest);
         return tokenObj;

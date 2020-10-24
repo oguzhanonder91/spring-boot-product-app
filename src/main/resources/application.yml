@@ -1,0 +1,50 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #?createDatabaseIfNotExist=true
+    url: jdbc:mysql://127.0.0.1:3306/productoperations?&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        ddl-auto: true
+
+  main:
+    lazy-initialization: true
+
+  mail:
+    host: localhost
+    port: 2525
+    username: foo@bar.com
+    password: foobar
+    properties.mail.transport.protocol: smtps
+    properties.mail.smtps.auth: true
+    properties.mail.smtps.from: foo@bar.com
+    properties.mail.smtps.starttls.enable: true
+    properties.mail.smtps.timeout: 8000
+
+caborya:
+  security:
+    decodeSplit: ond75
+    base64Secret: TXlBcHBEZWZhdWx0U2VjcmV0S2V5T2d1emhhbk9uZGVyU3ByaW5nQm9vdDIwMjAxOTkxQWxpTXVhejI5TWF5aXM=
+    tokenValidity: 10800
+    rememberMeTokenValidity: 28800
+
+  support:
+    mail: caborya@gmail.com
+    baseUrl: localhost:8080
+
+  service:
+    annotationScanPackage: com
+    expiredTokenDeleteCronExpression: 0 0 6 * * *
+
+  menu:
+    file: data/menu.json
+
+

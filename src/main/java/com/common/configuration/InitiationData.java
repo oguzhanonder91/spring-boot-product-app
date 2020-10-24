@@ -10,7 +10,6 @@ import com.util.annotations.MyServiceGroupAnnotation;
 import com.util.enums.MethodType;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -57,8 +56,8 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
     @Autowired
     private SecurityUtil securityUtil;
 
-    @Value("${scanPackage}")
-    private String SCAN_PACKAGE;
+    @Autowired
+    private CaboryaConfig caboryaConfig;
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent applicationReadyEvent) {
@@ -94,7 +93,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File resource = new ClassPathResource(
-                    "data/menu.json").getFile();
+                    caboryaConfig.getMenu().getFile()).getFile();
             List<Menu> menus = Arrays.asList(objectMapper.readValue(resource, Menu[].class));
             for (Menu menu : menus) {
                 Menu returnVal = controlMenu(menu);
@@ -134,7 +133,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
                     if (role != null) {
                         roleList.add(role);
                     } else {
-                        throw new BaseException("Role Bulunamadı");
+                        throw new BaseException("Role Not Found");
                     }
                     Permission permissionSave = new Permission(PermissionType.MENU, menu.getId());
                     permissionSave.setRoles(roleList);
@@ -172,7 +171,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(MyServiceGroupAnnotation.class));
 
-        Set<BeanDefinition> beanDefinitionSet = scanner.findCandidateComponents(SCAN_PACKAGE);
+        Set<BeanDefinition> beanDefinitionSet = scanner.findCandidateComponents(caboryaConfig.getService().getAnnotationScanPackage());
         List<String> willDeleteServiceGroups = new ArrayList<>();
         List<String> willDeleteServices = new ArrayList<>();
 

@@ -1,6 +1,8 @@
 package com.util;
 
+import com.common.configuration.CaboryaConfig;
 import com.util.annotations.Decode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,12 +15,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 @Component
 public class SecurityUtil {
 
-    @Value("${decodeSplit}")
-    private String split;
+    @Autowired
+    private CaboryaConfig caboryaConfig;
+
+    public static final String ANONYMOUS = "ROLE_ANONYMOUS";
+
 
     public String getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -27,6 +33,13 @@ public class SecurityUtil {
         }
 
         return ((User) authentication.getPrincipal()).getUsername();
+    }
+
+    public boolean isAuthenticated(Authentication authentication){
+        return Optional.ofNullable(authentication)
+                .map(p -> p.getAuthorities().stream()
+                        .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ANONYMOUS)))
+                .orElse(false);
     }
 
     public <T> T decode(T decodeObj) {
@@ -41,7 +54,7 @@ public class SecurityUtil {
                     Method getMethod = decodeObj.getClass().getDeclaredMethod("get" + method);
                     Object o = getMethod.invoke(decodeObj);
                     byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString((String) o));
-                    String decodeStr = new String(decode).split(split)[0];
+                    String decodeStr = new String(decode).split(caboryaConfig.getSecurity().getDecodeSplit())[0];
                     Method setMethod = decodeObj.getClass().getDeclaredMethod("set" + method, field.getType());
                     setMethod.invoke(decodeObj, decodeStr);
                 } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
@@ -54,7 +67,7 @@ public class SecurityUtil {
 
     public String decode(String param) {
         byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString(param));
-        return new String(decode).split(split)[0];
+        return new String(decode).split(caboryaConfig.getSecurity().getDecodeSplit())[0];
     }
 
     public String encode(String param) {

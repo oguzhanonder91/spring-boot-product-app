@@ -1,10 +1,9 @@
 package com.util;
 
+import com.common.configuration.CaboryaConfig;
 import com.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -19,13 +18,10 @@ public class EmailUtil {
     private MessageSource messageSource;
 
     @Autowired
-    private Environment env;
-
-    @Autowired
     private JavaMailSender mailSender;
 
-    @Value( "${mail.baseUrl}" )
-    private String mailBaseUrl;
+    @Autowired
+    private CaboryaConfig caboryaConfig;
 
     public static final int TOKEN_REGISTRATION_AND_RESET_PASSWORD_EXPIRATION = 60 * 24;
 
@@ -42,7 +38,7 @@ public class EmailUtil {
     }
 
     public SimpleMailMessage constructRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
-        String url = mailBaseUrl + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
+        String url = caboryaConfig.getSupport().getBaseUrl() + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
         String message = messageSource.getMessage("message.regSucc", null, locale);
         return constructEmail("Registration Confirmation", message + " \r\n" + url, user);
     }
@@ -52,7 +48,7 @@ public class EmailUtil {
         email.setSubject(subject);
         email.setText(body);
         email.setTo(user.getEmail());
-        email.setFrom(env.getProperty("support.email"));
+        email.setFrom(caboryaConfig.getSupport().getMail());
         return email;
     }
 

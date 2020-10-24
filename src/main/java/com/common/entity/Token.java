@@ -33,7 +33,7 @@ public class Token extends BaseEntity {
         return tokenType;
     }
 
-    public void setTokenType(TokenType tokenType) {
+    private void setTokenType(TokenType tokenType) {
         this.tokenType = tokenType;
     }
 
@@ -65,7 +65,7 @@ public class Token extends BaseEntity {
         return expiry;
     }
 
-    public void setExpiry(long expiry) {
+    private void setExpiry(long expiry) {
         this.expiry = expiry;
     }
 
@@ -73,7 +73,7 @@ public class Token extends BaseEntity {
         return issuedAt;
     }
 
-    public void setIssuedAt(long issuedAt) {
+    private void setIssuedAt(long issuedAt) {
         this.issuedAt = issuedAt;
     }
 

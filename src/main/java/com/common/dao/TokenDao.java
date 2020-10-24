@@ -20,7 +20,7 @@ public class TokenDao {
 
     public Token tokenPrepare(final Token token, final HttpServletRequest request) {
         if (StringUtils.isEmpty(token.getValue())) {
-            throw new BaseException("Token üretilemedi");
+            throw new BaseException("Don't prepare token");
         }
         token.setDomain(StringUtils.isEmpty(request.getHeader("origin")) ? "thirdPart" : request.getHeader("origin"));
         return token;
