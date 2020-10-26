@@ -31,7 +31,7 @@ public abstract class BaseEntity  implements Serializable{
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "EET")
     private Date createdDate;
 
-    @Column(nullable = true)
+    @Column
     private String lastUpdatedBy;
 
     @Column
