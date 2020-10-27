@@ -39,7 +39,7 @@ public class AuthDao {
         LoginRequest decode = securityUtil.decode(loginRequest);
         authenticate(decode.getUsername(), decode.getPassword());
         UserDetails userDetails = controlUserDetailService(decode);
-        String token = generateToken(userDetails);
+        String token = generateToken(userDetails,loginRequest.isRememberMe());
         return prepare(token, userDetails, request);
     }
 
@@ -56,8 +56,8 @@ public class AuthDao {
         return userDetails;
     }
 
-    private String generateToken(UserDetails userDetails) {
-        final String token = jwtTokenUtil.generateJwtToken(userDetails);
+    private String generateToken(UserDetails userDetails,boolean isRememberMe) {
+        final String token = jwtTokenUtil.generateJwtToken(userDetails,isRememberMe);
         return token;
     }
 

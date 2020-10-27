@@ -12,6 +12,8 @@ public class CaboryaSecurity {
 
     private long rememberMeTokenValidity;
 
+    private long tokenRegistrationAndResetPasswordExpiration;
+
     public String getDecodeSplit() {
         return decodeSplit;
     }
@@ -50,5 +52,13 @@ public class CaboryaSecurity {
 
     public void setRememberMeTokenValidity(long rememberMeTokenValidity) {
         this.rememberMeTokenValidity = rememberMeTokenValidity;
+    }
+
+    public long getTokenRegistrationAndResetPasswordExpiration() {
+        return tokenRegistrationAndResetPasswordExpiration;
+    }
+
+    public void setTokenRegistrationAndResetPasswordExpiration(long tokenRegistrationAndResetPasswordExpiration) {
+        this.tokenRegistrationAndResetPasswordExpiration = tokenRegistrationAndResetPasswordExpiration;
     }
 }

@@ -47,12 +47,13 @@ public class JwtTokenUtil implements InitializingBean {
         }
     }
 
-    public String generateJwtToken(UserDetails userDetails) {
-        long issueDate = System.currentTimeMillis();
+    public String generateJwtToken(UserDetails userDetails, boolean rememberMe) {
+        long issueDate = new Date().getTime();
+        long validity = validity(rememberMe);
         return Jwts.builder()
                 .setSubject((userDetails.getUsername()))
                 .setIssuedAt(new Date(issueDate))
-                .setExpiration(new Date(issueDate + caboryaConfig.getSecurity().getTokenValidity() * 1000))
+                .setExpiration(new Date(issueDate + validity))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -96,6 +97,16 @@ public class JwtTokenUtil implements InitializingBean {
         }
 
         return null;
+    }
+
+    private long validity(boolean isRememberMe) {
+        long validity;
+        if (isRememberMe) {
+            validity = caboryaConfig.getSecurity().getRememberMeTokenValidity() * 1000;
+        } else {
+            validity = caboryaConfig.getSecurity().getTokenValidity() * 1000;
+        }
+        return validity;
     }
 
 }

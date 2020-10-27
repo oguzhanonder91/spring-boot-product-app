@@ -1,5 +1,6 @@
 package com.common.dao;
 
+import com.common.configuration.CaboryaConfig;
 import com.common.entity.Token;
 import com.common.exception.BaseException;
 import com.common.service.TokenService;
@@ -18,6 +19,9 @@ public class TokenDao {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private CaboryaConfig caboryaConfig;
+
     public Token tokenPrepare(final Token token, final HttpServletRequest request) {
         if (StringUtils.isEmpty(token.getValue())) {
             throw new BaseException("Don't prepare token");
@@ -32,15 +36,13 @@ public class TokenDao {
 
     public Token prepareRegistrationAndPassword(String email, TokenType tokenType, HttpServletRequest httpServletRequest) {
         long issued = new Date().getTime();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(issued);
-        cal.add(Calendar.MINUTE, EmailUtil.TOKEN_REGISTRATION_AND_RESET_PASSWORD_EXPIRATION);
+        long expiration = caboryaConfig.getSecurity().getTokenRegistrationAndResetPasswordExpiration() * 1000;
         String token = UUID.randomUUID().toString();
         Token newTokenObj = new Token()
                 .value(token)
                 .email(email)
                 .tokenType(tokenType)
-                .expiry(cal.getTimeInMillis())
+                .expiry(issued + expiration)
                 .issuedAt(issued);
         Token tokenObj = tokenPrepare(newTokenObj, httpServletRequest);
         return tokenObj;
@@ -70,7 +72,7 @@ public class TokenDao {
         }
     }
 
-    public void deleteTokensByIssuedDateBeforeNow(long issuedDate) {
-        tokenService.deleteAllByIssuedAtBefore(issuedDate);
+    public void deleteTokensByExpiryLess(long expiry) {
+        tokenService.deleteAllByExpiryLessThan(expiry);
     }
 }

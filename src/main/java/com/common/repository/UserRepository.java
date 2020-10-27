@@ -1,12 +1,11 @@
 package com.common.repository;
 
 import com.common.entity.User;
+import com.util.enums.EntityState;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface UserRepository extends BaseRepository<User> {
-    User findByEmail(final String email);
+    User findByEmailAndEntityState(final String email, EntityState state);
 }
 

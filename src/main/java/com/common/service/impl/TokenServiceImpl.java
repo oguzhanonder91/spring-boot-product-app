@@ -26,7 +26,7 @@ public class TokenServiceImpl extends BaseServiceImpl<Token> implements TokenSer
     }
 
     @Override
-    public void deleteAllByIssuedAtBefore(long issuedDate) {
-        tokenRepository.deleteAllByIssuedAtBefore(issuedDate);
+    public void deleteAllByExpiryLessThan(long expiryDate) {
+        tokenRepository.deleteAllByExpiryLessThan(expiryDate);
     }
 }

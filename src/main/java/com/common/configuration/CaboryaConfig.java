@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("caborya")
+@ConfigurationProperties(prefix = "caborya")
 public class CaboryaConfig {
 
     private CaboryaSecurity security;

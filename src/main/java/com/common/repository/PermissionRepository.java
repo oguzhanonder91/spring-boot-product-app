@@ -2,6 +2,7 @@ package com.common.repository;
 
 import com.common.entity.Permission;
 import com.common.entity.Role;
+import com.util.enums.EntityState;
 import com.util.enums.PermissionType;
 import org.springframework.stereotype.Repository;
 
@@ -10,17 +11,17 @@ import java.util.Optional;
 
 @Repository
 public interface PermissionRepository extends BaseRepository<Permission> {
-    Optional<Permission> findByTypeAndItemId(PermissionType permissionType, String itemId);
+    Optional<Permission> findByTypeAndItemIdAndEntityState(PermissionType permissionType, String itemId, EntityState state);
 
-    List<Permission> findByItemIdIn(List<String> items);
+    List<Permission> findByEntityStateAndItemIdIn(EntityState state, List<String> items);
 
-    Optional<Permission> findByItemIdAndTypeAndRoles_Code(String item, PermissionType permissionType, String code);
+    Optional<Permission> findByItemIdAndTypeAndEntityStateAndRoles_Code(String item, PermissionType permissionType, EntityState state, String code);
 
-    List<Permission> findByTypeAndRoles_CodeIn(PermissionType permissionType, List<String> code);
+    List<Permission> findByTypeAndEntityStateAndRoles_CodeIn(PermissionType permissionType, EntityState state, List<String> code);
 
-    List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles);
+    List<Permission> findByItemIdAndEntityStateAndTypeAndRolesIn(String item, EntityState state, PermissionType permissionType, List<Role> roles);
 
-    List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles);
+    List<Permission> findByTypeAndEntityStateAndRolesIn(PermissionType permissionType, EntityState state, List<Role> roles);
 
 
 }

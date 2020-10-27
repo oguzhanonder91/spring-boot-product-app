@@ -23,8 +23,6 @@ public class EmailUtil {
     @Autowired
     private CaboryaConfig caboryaConfig;
 
-    public static final int TOKEN_REGISTRATION_AND_RESET_PASSWORD_EXPIRATION = 60 * 24;
-
     public SimpleMailMessage constructResendRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
         String url = contextPath + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
         String message = messageSource.getMessage("message.resendToken", null, locale);
