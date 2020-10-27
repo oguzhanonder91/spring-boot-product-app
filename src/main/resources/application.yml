@@ -4,6 +4,7 @@ server:
 spring:
   datasource:
     driverClassName:  com.mysql.cj.jdbc.Driver
+    #?createDatabaseIfNotExist=true
     url: jdbc:mysql://127.0.0.1:3306/productoperations?&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: root
