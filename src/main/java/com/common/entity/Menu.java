@@ -1,13 +1,9 @@
 package com.common.entity;
 
-
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Where(clause = "entity_state=1")
 public class Menu extends BaseEntity {
 
     @Column(nullable = false)

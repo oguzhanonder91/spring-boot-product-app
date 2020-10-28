@@ -57,4 +57,6 @@ public interface BaseService<T extends BaseEntity> {
 
     void realDeleteAll(final List<T> list);
 
+    List<T> findAllActive();
+
 }

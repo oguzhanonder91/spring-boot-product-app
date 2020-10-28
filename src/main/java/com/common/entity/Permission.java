@@ -1,13 +1,10 @@
 package com.common.entity;
 
 import com.util.enums.PermissionType;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Where(clause = "entity_state=1")
 public class Permission extends BaseEntity{
 
     @Column

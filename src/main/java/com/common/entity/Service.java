@@ -1,14 +1,11 @@
 package com.common.entity;
 
 import com.util.enums.MethodType;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-@Where(clause = "entity_state=1")
 public class Service extends BaseEntity {
 
     @Column(nullable = false)

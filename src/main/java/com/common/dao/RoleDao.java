@@ -36,4 +36,9 @@ public class RoleDao {
     public List<Role> findAll() {
         return roleService.findAll();
     }
+
+    public List<Role> findAllActive() {
+        return roleService.findAllActive();
+    }
+
 }

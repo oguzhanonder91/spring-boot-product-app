@@ -2,8 +2,6 @@ package com.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Collection;
@@ -12,7 +10,6 @@ import java.util.List;
 
 
 @Entity
-@Where(clause = "entity_state=1")
 public class User extends BaseEntity {
 
     @Column(nullable = false)

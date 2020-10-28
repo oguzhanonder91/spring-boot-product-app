@@ -1,13 +1,10 @@
 package com.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Where(clause = "entity_state=1")
 public class Role extends BaseEntity {
 
     @ManyToMany(mappedBy = "roles")

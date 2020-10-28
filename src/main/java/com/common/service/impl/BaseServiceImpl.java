@@ -3,6 +3,9 @@ package com.common.service.impl;
 import com.common.entity.BaseEntity;
 import com.common.repository.BaseRepository;
 import com.common.service.BaseService;
+import com.common.specification.GenericSpecification;
+import com.common.specification.SearchCriteria;
+import com.common.specification.SearchOperation;
 import com.util.SecurityUtil;
 import com.util.enums.EntityState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,4 +169,10 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         repository.deleteAll(list);
     }
 
+    @Override
+    public List<T> findAllActive() {
+        GenericSpecification genericSpecification = new GenericSpecification<T>();
+        genericSpecification.add(new SearchCriteria("entityState", EntityState.ACTIVE, SearchOperation.EQUAL));
+        return repository.findAll(genericSpecification);
+    }
 }
