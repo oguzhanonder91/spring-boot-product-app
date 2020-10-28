@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driverClassName:  com.mysql.cj.jdbc.Driver
-    #?createDatabaseIfNotExist=true
+    #?createDatabaseIfNotExist=true #collation = utf8_general_ci , charset = utf8
     url: jdbc:mysql://127.0.0.1:3306/productoperations?&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: root
