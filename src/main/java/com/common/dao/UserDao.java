@@ -6,6 +6,7 @@ import com.common.exception.BaseException;
 import com.common.exception.BaseNotFoundException;
 import com.common.service.RoleService;
 import com.common.service.UserService;
+import com.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,9 @@ public class UserDao {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private SecurityUtil securityUtil;
+
     public User registerNewUserAccount(final UserDto accountDto) {
         if (emailExist(accountDto.getEmail())) {
             throw new BaseException("There is an account with that email adress: " + accountDto.getEmail());
@@ -33,7 +37,7 @@ public class UserDao {
         user.setName(accountDto.getName());
         user.setSurname(accountDto.getSurname());
         user.setEmail(accountDto.getEmail());
-        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(securityUtil.decode(accountDto.getPassword())));
         user.setRoles(Arrays.asList(roleDao.findByCode(accountDto.getRoleCode())));
         return user;
     }
