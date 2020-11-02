@@ -1,13 +1,10 @@
 package com.example.entity;
 
 import com.common.entity.BaseEntity;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
-@Where(clause = "entity_state=1")
 public class Product extends BaseEntity {
 
     @Column
