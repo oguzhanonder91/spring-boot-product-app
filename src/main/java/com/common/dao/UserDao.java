@@ -61,4 +61,18 @@ public class UserDao {
     public User update(User user) {
         return userService.update(user);
     }
+
+    public User findById(String id) {
+        User user = userService.findByIdAndEntityState(id);
+        if (user == null) {
+            throw new BaseNotFoundException("Not found User -> " + id);
+        }
+        return user;
+    }
+
+    public void changePassword(User user , String password){
+        user.setPassword(passwordEncoder.encode(securityUtil.decode(password)));
+        update(user);
+    }
+
 }

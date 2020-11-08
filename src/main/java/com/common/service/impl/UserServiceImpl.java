@@ -19,5 +19,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         return userRepository.findByEmailAndEntityState(email, EntityState.ACTIVE);
     }
 
+    @Override
+    public User findByIdAndEntityState(String id) {
+        return userRepository.findByIdAndEntityState(id, EntityState.ACTIVE);
+    }
 }
 

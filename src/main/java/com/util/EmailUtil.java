@@ -1,6 +1,5 @@
 package com.util;
 
-import com.common.configuration.CaboryaConfig;
 import com.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,22 +20,22 @@ public class EmailUtil {
     private JavaMailSender mailSender;
 
     @Autowired
-    private CaboryaConfig caboryaConfig;
+    private CommonUtil commonUtil;
 
-    public SimpleMailMessage constructResendRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
-        String url = contextPath + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
+    public SimpleMailMessage constructResendRegistrationTokenEmail(Locale locale, String token, User user) {
+        String url = commonUtil.getBaseMailUrl() + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token + File.separator + user.getId();
         String message = messageSource.getMessage("message.resendToken", null, locale);
         return constructEmail("Resend Registration Token", message + " \r\n" + url, user);
     }
 
-    public SimpleMailMessage constructResetPasswordTokenEmail(String contextPath, Locale locale, String token, User user) {
-        String url = contextPath + File.separator + "user" + File.separator + "changePassword" + File.separator + user.getId() + File.separator + token;
+    public SimpleMailMessage constructResetPasswordTokenEmail(Locale locale, String token, User user) {
+        String url = commonUtil.getBaseMailUrl() + File.separator + "user" + File.separator + "changePassword" + File.separator + token + File.separator + user.getId();
         String message = messageSource.getMessage("message.resetPassword", null, locale);
         return constructEmail("Reset Password", message + " \r\n" + url, user);
     }
 
-    public SimpleMailMessage constructRegistrationTokenEmail(String contextPath, Locale locale, String token, User user) {
-        String url = caboryaConfig.getSupport().getBaseUrl() + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token;
+    public SimpleMailMessage constructRegistrationTokenEmail(Locale locale, String token, User user) {
+        String url = commonUtil.getBaseMailUrl() + File.separator + "user" + File.separator + "registrationConfirm" + File.separator + token + File.separator + user.getId();
         String message = messageSource.getMessage("message.regSucc", null, locale);
         return constructEmail("Registration Confirmation", message + " \r\n" + url, user);
     }
@@ -46,7 +45,7 @@ public class EmailUtil {
         email.setSubject(subject);
         email.setText(body);
         email.setTo(user.getEmail());
-        email.setFrom(caboryaConfig.getSupport().getMail());
+        email.setFrom(commonUtil.getSupportMailUrl());
         return email;
     }
 

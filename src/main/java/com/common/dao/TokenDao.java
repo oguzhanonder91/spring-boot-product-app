@@ -1,12 +1,17 @@
 package com.common.dao;
 
 import com.common.configuration.CaboryaConfig;
+import com.common.dto.BaseResponse;
 import com.common.entity.Token;
 import com.common.exception.BaseException;
 import com.common.service.TokenService;
+import com.util.CommonUtil;
 import com.util.EmailUtil;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -74,5 +79,27 @@ public class TokenDao {
 
     public void deleteTokensByExpiryLess(long expiry) {
         tokenService.deleteAllByExpiryLessThan(expiry);
+    }
+
+    public ResponseEntity<?> controlTokenReturnBaseResponse(Token token, HttpServletRequest httpServletRequest,
+                                                            MessageSource messageSource , String param,
+                                                            String invalidToken,String expired,String valid){
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.setData(param);
+        if (token == null) {
+            baseResponse.setMessage(messageSource.getMessage(invalidToken, null, httpServletRequest.getLocale()));
+            baseResponse.setKey(CommonUtil.TOKEN_INVALID);
+            return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        }
+        Calendar cal = Calendar.getInstance();
+        if ((token.getExpiry() - cal.getTimeInMillis()) <= 0) {
+            this.deleteRealToken(token);
+            baseResponse.setMessage(messageSource.getMessage(expired, null, httpServletRequest.getLocale()));
+            baseResponse.setKey(CommonUtil.TOKEN_EXPIRED);
+            return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        }
+        baseResponse.setMessage(messageSource.getMessage(valid, null, httpServletRequest.getLocale()));
+        baseResponse.setKey(CommonUtil.TOKEN_VALID);
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 }

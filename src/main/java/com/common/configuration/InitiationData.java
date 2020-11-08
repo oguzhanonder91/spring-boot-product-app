@@ -157,8 +157,9 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
     }
 
     private void permissionSaveService(String itemId, PermissionType permissionType, String[] roles) {
-        if (permissionDao.findByTypeAndItemId(permissionType, itemId) == null) {
-            Permission permission = new Permission(permissionType, itemId);
+        Permission permission = permissionDao.findByTypeAndItemId(permissionType, itemId);
+        if (permission == null) {
+            permission = new Permission(permissionType, itemId);
             List<Role> roleList = roleControl(roles);
             permission.setRoles(roleList);
             permissionDao.save(permission);
@@ -223,19 +224,21 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
     }
 
     private ServiceGroup controlServiceGroup(String key, String path, String name) {
-        if (serviceGroupDao.findByKeyAndPath(key, path) == null) {
-            ServiceGroup serviceGroup = new ServiceGroup(path, name, key);
+        ServiceGroup serviceGroup = serviceGroupDao.findByKeyAndPath(key, path);
+        if (serviceGroup == null) {
+            serviceGroup = new ServiceGroup(path, name, key);
             return serviceGroupDao.save(serviceGroup);
         }
-        return null;
+        return serviceGroup;
     }
 
     private Service controlService(String key, String path, MethodType methodType, String name, ServiceGroup serviceGroup) {
-        if (serviceDao.findByKeyAndMethod(key, methodType) == null) {
-            Service service = new Service(serviceGroup.getPath() + path, key, methodType, name, serviceGroup);
+        Service service = serviceDao.findByKeyAndMethod(key, methodType);
+        if (service == null) {
+            service = new Service(serviceGroup.getPath() + path, key, methodType, name, serviceGroup);
             return serviceDao.save(service);
         }
-        return null;
+        return service;
     }
 
 }

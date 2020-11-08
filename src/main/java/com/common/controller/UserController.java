@@ -4,6 +4,8 @@ import com.common.dao.MenuDao;
 import com.common.dao.PermissionDao;
 import com.common.dao.TokenDao;
 import com.common.dao.UserDao;
+import com.common.dto.BaseResponse;
+import com.common.dto.PasswordDto;
 import com.common.dto.UserDto;
 import com.common.entity.*;
 import com.util.CommonUtil;
@@ -19,12 +21,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -61,30 +66,74 @@ public class UserController {
         userDao.save(user);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, httpServletRequest);
         tokenDao.create(token);
-        final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(CommonUtil.getAppUrl(httpServletRequest), httpServletRequest.getLocale(), token.getValue(), user);
+        final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(httpServletRequest.getLocale(), token.getValue(), user);
         emailUtil.sendEmail(mailMessage);
         String message = messageSource.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @GetMapping("/registrationConfirm/{paramToken}")
-    @MyServiceAnnotation(name = "Kullanıcı Kayıt Doğrulama", path = "/registrationConfirm/{}", type = MethodType.GET, permissionRoles = {"ADMIN", "USER"})
-    public ResponseEntity<String> confirmRegistration(HttpServletRequest httpServletRequest, @PathVariable String paramToken) {
+    @GetMapping("/registrationConfirm/{paramToken}/{userId}")
+    @MyServiceAnnotation(name = "Kullanıcı Kayıt Doğrulama", path = "/registrationConfirm/{}/{}", type = MethodType.GET, permissionRoles = {"ADMIN", "USER"})
+    public ResponseEntity<?> confirmRegistration(HttpServletRequest httpServletRequest, @PathVariable String paramToken, @PathVariable String userId) {
         Token token = tokenDao.controlTokenRegistrationAndPassword(paramToken, TokenType.REGISTRATION, httpServletRequest);
-        if (token == null) {
-            return new ResponseEntity<>(messageSource.getMessage("auth.message.invalidToken", null, httpServletRequest.getLocale()), HttpStatus.OK);
+        ResponseEntity<?> responseEntity = tokenDao.controlTokenReturnBaseResponse(token, httpServletRequest, messageSource, userId,
+                "auth.message.invalidToken",
+                "auth.message.expired",
+                "message.accountVerified");
+        if (((BaseResponse) responseEntity.getBody()).getKey().equalsIgnoreCase(CommonUtil.TOKEN_VALID)) {
+            User user = userDao.findByEmail(token.getEmail());
+            user.setEnabled(true);
+            userDao.update(user);
         }
+        return responseEntity;
+    }
 
-        Calendar cal = Calendar.getInstance();
-        if ((token.getExpiry() - cal.getTimeInMillis()) <= 0) {
-            tokenDao.deleteRealToken(token);
-            return new ResponseEntity<>(messageSource.getMessage("auth.message.expired", null, httpServletRequest.getLocale()), HttpStatus.OK);
+
+    @GetMapping("/changePassword/{paramToken}/{userId}")
+    @MyServiceAnnotation(name = "Kullanıcı Şifre Değiştirme", path = "/changePassword/{}/{}", type = MethodType.GET, permissionRoles = {"ADMIN", "USER"})
+    public ResponseEntity<?> changePasswordControl(HttpServletRequest httpServletRequest, @PathVariable String paramToken, @PathVariable String userId) {
+        Token token = tokenDao.controlTokenRegistrationAndPassword(paramToken, TokenType.CHANGE_PASSWORD, httpServletRequest);
+        return tokenDao.controlTokenReturnBaseResponse(token, httpServletRequest, messageSource, userId,
+                "auth.message.invalidToken",
+                "token.changePassword.message.expired",
+                "token.changePassword.message.valid");
+    }
+
+
+    @PutMapping(value = "/forgotPassword")
+    @MyServiceAnnotation(name = "Kullanıcı Şifre Unuttum", path = "/resetPassword", type = MethodType.PUT, permissionRoles = {"ADMIN", "USER"})
+    public ResponseEntity<String> resetPassword(HttpServletRequest request, @RequestBody final String userEmail) {
+        User user = userDao.findByEmail(userEmail);
+        if (user.isEnabled()) {
+            Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.CHANGE_PASSWORD, request);
+            tokenDao.create(token);
+            final SimpleMailMessage mailMessage = emailUtil.constructResetPasswordTokenEmail(request.getLocale(), token.getValue(), user);
+            emailUtil.sendEmail(mailMessage);
+            return new ResponseEntity<>(messageSource.getMessage("message.resetPasswordEmail", null, request.getLocale()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(messageSource.getMessage("auth.message.disabled", null, request.getLocale()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
-        User user = userDao.findByEmail(token.getEmail());
-        user.setEnabled(true);
-        userDao.update(user);
-        return new ResponseEntity<>(messageSource.getMessage("message.accountVerified", null, httpServletRequest.getLocale()), HttpStatus.OK);
+    @PutMapping(value = "/changePassword/{userId}")
+    @MyServiceAnnotation(name = "Kullanıcı Şifre Değiştirme", path = "/changePassword", type = MethodType.PUT, permissionRoles = {"ADMIN", "USER"})
+    public ResponseEntity<String> changePassword(HttpServletRequest request, @PathVariable String userId, @Valid @RequestBody final PasswordDto passwordDto) {
+        User user = userDao.findById(userId);
+        userDao.changePassword(user, passwordDto.getPassword());
+        String message = messageSource.getMessage("message.resetPasswordSuc", null, request.getLocale());
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/reSendConfirmation")
+    @MyServiceAnnotation(name = "Kullanıcı Yeniden Doğrulama Kodu", path = "/reSendConfirmation", type = MethodType.PUT, permissionRoles = {"ADMIN", "USER"})
+    public ResponseEntity<String> reSendConfirmation(HttpServletRequest request, @RequestBody final String userId) {
+        User user = userDao.findById(userId);
+        final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, request);
+        tokenDao.create(token);
+        final SimpleMailMessage mailMessage = emailUtil.constructResendRegistrationTokenEmail(request.getLocale(), token.getValue(), user);
+        emailUtil.sendEmail(mailMessage);
+        String message = messageSource.getMessage("message.resendToken", null, request.getLocale());
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @GetMapping(path = "/menus")

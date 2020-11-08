@@ -1,5 +1,6 @@
 package com.util.validation;
 
+import com.common.dto.PasswordDto;
 import com.common.dto.UserDto;
 import com.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,18 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(Object obj, ConstraintValidatorContext constraintValidatorContext) {
-        UserDto user = (UserDto) obj;
-        return securityUtil.decode(user.getPassword()).equals(securityUtil.decode(user.getMatchingPassword()));
+        String password = null;
+        String matchingPassword = null;
+        if (obj instanceof UserDto) {
+            UserDto user = (UserDto) obj;
+            password = user.getPassword();
+            matchingPassword = user.getMatchingPassword();
+        } else if (obj instanceof PasswordDto) {
+            PasswordDto passwordDto = (PasswordDto) obj;
+            password = passwordDto.getPassword();
+            matchingPassword = passwordDto.getMatchingPassword();
+        }
+
+        return securityUtil.decode(password).equals(securityUtil.decode(matchingPassword));
     }
 }
