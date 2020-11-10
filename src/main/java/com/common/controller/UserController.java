@@ -66,8 +66,7 @@ public class UserController {
         userDao.save(user);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, httpServletRequest);
         tokenDao.create(token);
-        final SimpleMailMessage mailMessage = emailUtil.constructRegistrationTokenEmail(httpServletRequest.getLocale(), token.getValue(), user);
-        emailUtil.sendEmail(mailMessage);
+        emailUtil.sendActivationEmail(httpServletRequest.getLocale(), user , token.getValue());
         String message = messageSource.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -107,8 +106,7 @@ public class UserController {
         if (user.isEnabled()) {
             Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.CHANGE_PASSWORD, request);
             tokenDao.create(token);
-            final SimpleMailMessage mailMessage = emailUtil.constructResetPasswordTokenEmail(request.getLocale(), token.getValue(), user);
-            emailUtil.sendEmail(mailMessage);
+            emailUtil.sendResetPasswordEmail(request.getLocale(), user , token.getValue());
             return new ResponseEntity<>(messageSource.getMessage("message.resetPasswordEmail", null, request.getLocale()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(messageSource.getMessage("auth.message.disabled", null, request.getLocale()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -130,8 +128,7 @@ public class UserController {
         User user = userDao.findById(userId);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, request);
         tokenDao.create(token);
-        final SimpleMailMessage mailMessage = emailUtil.constructResendRegistrationTokenEmail(request.getLocale(), token.getValue(), user);
-        emailUtil.sendEmail(mailMessage);
+        emailUtil.sendActivationEmail(request.getLocale(), user , token.getValue());
         String message = messageSource.getMessage("message.resendToken", null, request.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

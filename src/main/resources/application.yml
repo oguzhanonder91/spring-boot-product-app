@@ -14,15 +14,21 @@ spring:
   main:
     lazy-initialization: true
   mail:
-    host: localhost
+    host: smtp.mailtrap.io
     port: 2525
-    username: foo@bar.com
-    password: foobar
+    username: 0b6357ac2fe211
+    password: a32dfc664643fc
     properties.mail.transport.protocol: smtps
     properties.mail.smtps.auth: true
-    properties.mail.smtps.from: foo@bar.com
+    properties.mail.smtps.from: 6c8eb1775d-51bd1c@inbox.mailtrap.io
     properties.mail.smtps.starttls.enable: true
     properties.mail.smtps.timeout: 8000
+
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    enabled: true
+
 
 caborya:
   security:

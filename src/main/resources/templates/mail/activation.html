@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{email.activation.title}">Caborya activation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<p th:text="#{email.activation.greeting(${user.getName()} +' ' + ${user.getSurname()})}">
+    Dear
+</p>
+<p th:text="#{message.regSucc}">
+    Your Caborya account has been created, please click on the URL below to activate it:
+</p>
+<p>
+    <a  th:href="${url}" >Activation link</a>
+</p>
+<p>
+    <span th:text="#{email.activation.text2}">Regards, </span>
+    <br/>
+    <em th:text="#{email.signature}">Caborya.</em>
+</p>
+</body>
+</html>
