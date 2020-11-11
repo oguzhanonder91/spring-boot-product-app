@@ -17,7 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <passay.version>1.0</passay.version>
-        <guava.version>20.0</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <io.jsonwebtoken.version>0.10.7</io.jsonwebtoken.version>
         <jackson.core.version>2.11.1</jackson.core.version>
         <spring.configuration.processor.version>2.2.2.RELEASE</spring.configuration.processor.version>

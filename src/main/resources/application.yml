@@ -14,13 +14,13 @@ spring:
   main:
     lazy-initialization: true
   mail:
-    host: smtp.mailtrap.io
+    host: localhost
     port: 2525
-    username: 0b6357ac2fe211
-    password: a32dfc664643fc
+    username: foo@bar.com
+    password: foobar
     properties.mail.transport.protocol: smtps
     properties.mail.smtps.auth: true
-    properties.mail.smtps.from: 6c8eb1775d-51bd1c@inbox.mailtrap.io
+    properties.mail.smtps.from: foo@bar.com
     properties.mail.smtps.starttls.enable: true
     properties.mail.smtps.timeout: 8000
 
