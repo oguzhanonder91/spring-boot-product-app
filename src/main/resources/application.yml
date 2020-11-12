@@ -28,7 +28,7 @@ spring:
     mode: HTML
     encoding: UTF-8
     enabled: true
-
+    suffix: .html
 
 caborya:
   security:
