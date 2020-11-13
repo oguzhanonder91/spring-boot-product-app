@@ -20,16 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,20 +63,20 @@ public class UserController {
         userDao.save(user);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, httpServletRequest);
         tokenDao.create(token);
-        emailUtil.sendActivationEmail(httpServletRequest.getLocale(), user , token.getValue());
+        emailUtil.sendActivationEmail(httpServletRequest.getLocale(), user, token.getValue());
         String message = messageSource.getMessage("message.regSuccAndEmail", null, httpServletRequest.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @GetMapping("/registrationConfirm/{paramToken}/{userId}")
     @MyServiceAnnotation(name = "Kullanıcı Kayıt Doğrulama", path = "/registrationConfirm/{}/{}", type = MethodType.GET, permissionRoles = {"ADMIN", "USER"})
-    public ResponseEntity<?> confirmRegistration(HttpServletRequest httpServletRequest, @PathVariable String paramToken, @PathVariable String userId) {
+    public ResponseEntity<BaseResponse<String>> confirmRegistration(HttpServletRequest httpServletRequest, @PathVariable String paramToken, @PathVariable String userId) {
         Token token = tokenDao.controlTokenRegistrationAndPassword(paramToken, TokenType.REGISTRATION, httpServletRequest);
-        ResponseEntity<?> responseEntity = tokenDao.controlTokenReturnBaseResponse(token, httpServletRequest, messageSource, userId,
+        ResponseEntity<BaseResponse<String>> responseEntity = tokenDao.controlTokenReturnBaseResponse(token, httpServletRequest, messageSource, userId,
                 "auth.message.invalidToken",
                 "auth.message.expired",
                 "message.accountVerified");
-        if (((BaseResponse) responseEntity.getBody()).getKey().equalsIgnoreCase(CommonUtil.TOKEN_VALID)) {
+        if (!StringUtils.isEmpty(Objects.requireNonNull(responseEntity.getBody()).getKey()) && responseEntity.getBody().getKey().equalsIgnoreCase(CommonUtil.TOKEN_VALID)) {
             User user = userDao.findByEmail(token.getEmail());
             user.setEnabled(true);
             userDao.update(user);
@@ -106,7 +103,7 @@ public class UserController {
         if (user.isEnabled()) {
             Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.CHANGE_PASSWORD, request);
             tokenDao.create(token);
-            emailUtil.sendResetPasswordEmail(request.getLocale(), user , token.getValue());
+            emailUtil.sendResetPasswordEmail(request.getLocale(), user, token.getValue());
             return new ResponseEntity<>(messageSource.getMessage("message.resetPasswordEmail", null, request.getLocale()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(messageSource.getMessage("auth.message.disabled", null, request.getLocale()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,7 +125,7 @@ public class UserController {
         User user = userDao.findById(userId);
         final Token token = tokenDao.prepareRegistrationAndPassword(user.getEmail(), TokenType.REGISTRATION, request);
         tokenDao.create(token);
-        emailUtil.sendActivationEmail(request.getLocale(), user , token.getValue());
+        emailUtil.sendActivationEmail(request.getLocale(), user, token.getValue());
         String message = messageSource.getMessage("message.resendToken", null, request.getLocale());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -139,7 +136,7 @@ public class UserController {
         User user = userDao.findByEmail(securityUtil.getCurrentAuditor());
         List<Permission> permissions = permissionDao.findByTypeAndRolesIn(PermissionType.MENU, (List<Role>) user.getRoles());
         List<String> menuIds = permissions.stream()
-                .map(p -> p.getItemId())
+                .map(Permission::getItemId)
                 .collect(Collectors.toList());
         List<Menu> menus = menuDao.getMenusOfUser(menuIds);
         user.setMenus(menus);

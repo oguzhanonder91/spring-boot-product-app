@@ -39,26 +39,23 @@ public class AuthDao {
         LoginRequest decode = securityUtil.decode(loginRequest);
         authenticate(decode.getUsername(), decode.getPassword());
         UserDetails userDetails = controlUserDetailService(decode);
-        String token = generateToken(userDetails,loginRequest.isRememberMe());
+        String token = generateToken(userDetails, loginRequest.isRememberMe());
         return prepare(token, userDetails, request);
     }
 
     public Token logoutAttempt(HttpServletRequest request) {
         final String user = securityUtil.getCurrentAuditor();
         String token = jwtTokenUtil.parseJwt(request);
-        Token validToken = tokenDao.controlToken(token, user, TokenType.AUTH, request);
-        return validToken;
+        return tokenDao.controlToken(token, user, TokenType.AUTH, request);
     }
 
     private UserDetails controlUserDetailService(LoginRequest decodeLoginRequest) {
-        final UserDetails userDetails = userDetailsService
+        return userDetailsService
                 .loadUserByUsername(decodeLoginRequest.getUsername());
-        return userDetails;
     }
 
-    private String generateToken(UserDetails userDetails,boolean isRememberMe) {
-        final String token = jwtTokenUtil.generateJwtToken(userDetails,isRememberMe);
-        return token;
+    private String generateToken(UserDetails userDetails, boolean isRememberMe) {
+        return jwtTokenUtil.generateJwtToken(userDetails, isRememberMe);
     }
 
     private Token prepare(String token, UserDetails userDetails, HttpServletRequest httpServletRequest) {
@@ -70,8 +67,7 @@ public class AuthDao {
                 .tokenType(TokenType.AUTH)
                 .expiry(expiry)
                 .issuedAt(issuedAt);
-        Token tokenObj = tokenDao.tokenPrepare(newTokenObj, httpServletRequest);
-        return tokenObj;
+        return tokenDao.tokenPrepare(newTokenObj, httpServletRequest);
     }
 
     private void authenticate(final String username, final String password) throws BaseException {

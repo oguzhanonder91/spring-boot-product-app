@@ -1,6 +1,6 @@
 package com.common.dto;
 
-public class JwtResponse extends BaseResponse {
+public class JwtResponse extends BaseResponse<JwtResponse> {
 
     private final String token;
 

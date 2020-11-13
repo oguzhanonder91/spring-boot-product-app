@@ -3,7 +3,6 @@ package com.util;
 import com.common.configuration.CaboryaConfig;
 import com.util.annotations.Decode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -35,7 +34,7 @@ public class SecurityUtil {
         return ((User) authentication.getPrincipal()).getUsername();
     }
 
-    public boolean isAuthenticated(Authentication authentication){
+    public boolean isAuthenticated(Authentication authentication) {
         return Optional.ofNullable(authentication)
                 .map(p -> p.getAuthorities().stream()
                         .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ANONYMOUS)))
@@ -43,9 +42,9 @@ public class SecurityUtil {
     }
 
     public <T> T decode(T decodeObj) {
-        Annotation annotation = decodeObj.getClass().getAnnotation(Decode.class);
+        Decode annotation = decodeObj.getClass().getAnnotation(Decode.class);
         if (annotation != null) {
-            for (String a : ((Decode) annotation).methods()) {
+            for (String a : annotation.methods()) {
                 String[] arr = a.split("-");
                 String method = arr[0];
                 String fieldName = arr[1];
@@ -55,9 +54,10 @@ public class SecurityUtil {
                     Object o = getMethod.invoke(decodeObj);
                     byte[] decode = Base64Utils.decode(Base64Utils.decodeFromString((String) o));
                     String decodeStr = new String(decode).split(caboryaConfig.getSecurity().getDecodeSplit())[0];
+                    assert field != null;
                     Method setMethod = decodeObj.getClass().getDeclaredMethod("set" + method, field.getType());
                     setMethod.invoke(decodeObj, decodeStr);
-                } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+                } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }

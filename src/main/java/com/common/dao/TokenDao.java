@@ -6,7 +6,6 @@ import com.common.entity.Token;
 import com.common.exception.BaseException;
 import com.common.service.TokenService;
 import com.util.CommonUtil;
-import com.util.EmailUtil;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -49,8 +48,7 @@ public class TokenDao {
                 .tokenType(tokenType)
                 .expiry(issued + expiration)
                 .issuedAt(issued);
-        Token tokenObj = tokenPrepare(newTokenObj, httpServletRequest);
-        return tokenObj;
+        return tokenPrepare(newTokenObj, httpServletRequest);
     }
 
     public Token controlToken(final String tokenParam, final String email, TokenType tokenType, final HttpServletRequest request) {
@@ -68,7 +66,7 @@ public class TokenDao {
             origin = request.getHeader("origin");
         }
         final Optional<Token> token = tokenService.findByValueAndTokenTypeAndDomain(tokenParam, tokenType, origin);
-        return (Token) token.orElse(null);
+        return token.orElse(null);
     }
 
     public void deleteRealToken(Token validToken) {
@@ -81,10 +79,10 @@ public class TokenDao {
         tokenService.deleteAllByExpiryLessThan(expiry);
     }
 
-    public ResponseEntity<?> controlTokenReturnBaseResponse(Token token, HttpServletRequest httpServletRequest,
+    public ResponseEntity<BaseResponse<String>> controlTokenReturnBaseResponse(Token token, HttpServletRequest httpServletRequest,
                                                             MessageSource messageSource , String param,
                                                             String invalidToken,String expired,String valid){
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<String> baseResponse = new BaseResponse<>();
         baseResponse.setData(param);
         if (token == null) {
             baseResponse.setMessage(messageSource.getMessage(invalidToken, null, httpServletRequest.getLocale()));
