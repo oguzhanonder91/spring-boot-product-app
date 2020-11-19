@@ -4,7 +4,6 @@ import com.common.dto.UserDto;
 import com.common.entity.User;
 import com.common.exception.BaseException;
 import com.common.exception.BaseNotFoundException;
-import com.common.service.RoleService;
 import com.common.service.UserService;
 import com.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,10 +23,7 @@ import org.springframework.util.ReflectionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -82,7 +79,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
             user.setName("Admin");
             user.setSurname("Admin");
             user.setEmail(email);
-            user.setRoles(Arrays.asList(role));
+            user.setRoles(Collections.singletonList(role));
             user.setEnabled(true);
             user.setPassword(passwordEncoder.encode("Admin2020?"));
             userDao.save(user);
@@ -94,7 +91,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         try {
             File resource = new ClassPathResource(
                     caboryaConfig.getMenu().getFile()).getFile();
-            List<Menu> menus = Arrays.asList(objectMapper.readValue(resource, Menu[].class));
+            Menu[] menus = objectMapper.readValue(resource, Menu[].class);
             for (Menu menu : menus) {
                 Menu returnVal = controlMenu(menu);
                 permissionSaveMenu(returnVal);
@@ -156,10 +153,10 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
         return roleList;
     }
 
-    private void permissionSaveService(String itemId, PermissionType permissionType, String[] roles) {
-        Permission permission = permissionDao.findByTypeAndItemId(permissionType, itemId);
+    private void permissionSaveService(String itemId, String[] roles) {
+        Permission permission = permissionDao.findByTypeAndItemId(PermissionType.SERVICE, itemId);
         if (permission == null) {
-            permission = new Permission(permissionType, itemId);
+            permission = new Permission(PermissionType.SERVICE, itemId);
             List<Role> roleList = roleControl(roles);
             permission.setRoles(roleList);
             permissionDao.save(permission);
@@ -178,8 +175,8 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
 
         try {
             for (BeanDefinition bd : beanDefinitionSet) {
-                Class clazz = Class.forName(bd.getBeanClassName());
-                MyServiceGroupAnnotation annotation = (MyServiceGroupAnnotation) clazz.getAnnotation(MyServiceGroupAnnotation.class);
+                Class<?> clazz = Class.forName(bd.getBeanClassName());
+                MyServiceGroupAnnotation annotation = clazz.getAnnotation(MyServiceGroupAnnotation.class);
                 String className = securityUtil.encode(clazz.getName());
                 willDeleteServiceGroups.add(className);
                 ServiceGroup serviceGroup = controlServiceGroup(className, annotation.path(), annotation.name());
@@ -192,7 +189,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
                         if (serviceGroup != null) {
                             Service service = controlService(methodName, myServiceAnnotation.path(), myServiceAnnotation.type(), myServiceAnnotation.name(), serviceGroup);
                             if (service != null) {
-                                permissionSaveService(service.getId(), PermissionType.SERVICE, myServiceAnnotation.permissionRoles());
+                                permissionSaveService(service.getId(), myServiceAnnotation.permissionRoles());
                             }
                         }
                     }
@@ -216,7 +213,7 @@ public class InitiationData implements ApplicationListener<ApplicationReadyEvent
     private void deleteServiceAndPermissions(List<String> keys) {
         List<Service> services = serviceDao.findByKeyNotIn(keys);
         List<String> ids = services.stream()
-                .map(p -> p.getId())
+                .map(Service::getId)
                 .collect(Collectors.toList());
         List<Permission> willDeletePermissions = permissionDao.findByItemIdIn(ids);
         permissionDao.realDeleteAll(willDeletePermissions);

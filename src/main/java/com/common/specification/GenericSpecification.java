@@ -13,7 +13,7 @@ public class GenericSpecification<T> implements Specification<T> {
 
     private static final long serialVersionUID = 1900581010229669687L;
 
-    private List<SearchCriteria> list;
+    private final List<SearchCriteria> list;
 
     public GenericSpecification() {
         this.list = new ArrayList<>();

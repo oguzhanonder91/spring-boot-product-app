@@ -46,8 +46,7 @@ public class TradeDao {
     }
 
     public List<Trade> findAll(){
-        List<Trade> tradeList = tradeService.findAll();
-        return tradeList;
+        return tradeService.findAll();
     }
 
     public Trade update(Trade trade){

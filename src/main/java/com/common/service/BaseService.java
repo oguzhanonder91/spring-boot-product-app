@@ -1,7 +1,6 @@
 package com.common.service;
 
 import com.common.entity.BaseEntity;
-import com.util.enums.EntityState;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
