@@ -27,7 +27,7 @@ public class AuthDao {
     private SecurityUtil securityUtil;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private MyUserDetailsService myUserDetailsService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -50,7 +50,7 @@ public class AuthDao {
     }
 
     private UserDetails controlUserDetailService(LoginRequest decodeLoginRequest) {
-        return userDetailsService
+        return myUserDetailsService
                 .loadUserByUsername(decodeLoginRequest.getUsername());
     }
 
