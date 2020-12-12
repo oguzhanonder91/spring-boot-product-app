@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class WebSecurity {
@@ -42,7 +43,7 @@ public class WebSecurity {
     public boolean check(Authentication authentication, HttpServletRequest request) {
 
         try {
-            HandlerMethod handlerMethod = (HandlerMethod) requestMappingHandlerMapping.getHandler(request).getHandler();
+            HandlerMethod handlerMethod = (HandlerMethod) Objects.requireNonNull(requestMappingHandlerMapping.getHandler(request)).getHandler();
             String key = securityUtil.encode(handlerMethod.getMethod().toGenericString());
             MethodType methodType = MethodType.valueOf(request.getMethod());
             String username = authentication.getPrincipal() instanceof UserDetails ? ((UserDetails) authentication.getPrincipal()).getUsername() : authentication.getPrincipal().toString();
