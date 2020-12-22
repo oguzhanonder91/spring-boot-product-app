@@ -20,7 +20,6 @@
         <guava.version>30.0-jre</guava.version>
         <io.jsonwebtoken.version>0.10.7</io.jsonwebtoken.version>
         <jackson.core.version>2.11.1</jackson.core.version>
-        <spring.configuration.processor.version>2.2.2.RELEASE</spring.configuration.processor.version>
     </properties>
 
     <dependencies>
@@ -62,7 +61,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${spring.configuration.processor.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>

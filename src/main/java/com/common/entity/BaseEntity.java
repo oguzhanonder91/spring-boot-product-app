@@ -40,7 +40,7 @@ public abstract class BaseEntity  implements Serializable{
     private Date lastUpdatedDate;
 
 
-    @Column(name="entity_state")
+    @Column
     @JsonIgnore
     private EntityState entityState;
 
