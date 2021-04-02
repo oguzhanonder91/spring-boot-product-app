@@ -21,10 +21,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
+public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
 
     @Autowired
-    private BaseRepository<T> repository;
+    private BaseRepository<T> baseRepository;
 
     @Autowired
     private SecurityUtil securityUtil;
@@ -36,12 +36,12 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
                 .peek(s -> s.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor())))
                 .peek(s -> s.setCreatedDate(new Date(System.currentTimeMillis())))
                 .collect(Collectors.toList());
-        return repository.saveAll(newList);
+        return baseRepository.saveAll(newList);
     }
 
     @Override
     public List<T> findAllById(final List<String> strings) {
-        return repository.findAllById(strings);
+        return baseRepository.findAllById(strings);
     }
 
     @Override
@@ -51,43 +51,43 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
                 .peek(s -> s.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor())))
                 .peek(s -> s.setLastUpdatedDate(new Date(System.currentTimeMillis())))
                 .collect(Collectors.toList());
-        repository.saveAll(newList);
+        baseRepository.saveAll(newList);
     }
 
     @Override
     public T getOne(final String id) {
-        return repository.getOne(id);
+        return baseRepository.getOne(id);
     }
 
     @Override
     public Optional<T> findById(final String id) {
-        return repository.findById(id);
+        return baseRepository.findById(id);
     }
 
     @Override
     public void deleteById(final String id) {
-        Optional<T> t = repository.findById(id);
+        Optional<T> t = baseRepository.findById(id);
         t.ifPresent(entity -> {
             t.get().setEntityState(EntityState.PASSIVE);
             t.get().setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
             t.get().setLastUpdatedDate(new Date(System.currentTimeMillis()));
-            repository.save(t.get());
+            baseRepository.save(t.get());
         });
     }
 
     @Override
     public boolean existsById(final String id) {
-        return repository.existsById(id);
+        return baseRepository.existsById(id);
     }
 
     @Override
     public void flush() {
-        repository.flush();
+        baseRepository.flush();
     }
 
     @Override
     public List<T> findAll(final Example<T> example, final Sort sort) {
-        return repository.findAll(example, sort);
+        return baseRepository.findAll(example, sort);
     }
 
     @Override
@@ -95,32 +95,32 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         entity.setEntityState(EntityState.ACTIVE);
         entity.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         entity.setCreatedDate(new Date(System.currentTimeMillis()));
-        return repository.saveAndFlush(entity);
+        return baseRepository.saveAndFlush(entity);
     }
 
     @Override
     public List<T> findAll(final Example<T> example) {
-        return repository.findAll(example);
+        return baseRepository.findAll(example);
     }
 
     @Override
     public void deleteAllInBatch() {
-        repository.deleteAllInBatch();
+        baseRepository.deleteAllInBatch();
     }
 
     @Override
     public List<T> findAll() {
-        return repository.findAll();
+        return baseRepository.findAll();
     }
 
     @Override
     public List<T> findAll(final Sort sort) {
-        return repository.findAll(sort);
+        return baseRepository.findAll(sort);
     }
 
     @Override
     public Page<T> findAll(final Pageable pageable) {
-        return repository.findAll(pageable);
+        return baseRepository.findAll(pageable);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         t.setEntityState(EntityState.ACTIVE);
         t.setCreatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setCreatedDate(new Date(System.currentTimeMillis()));
-        return repository.save(t);
+        return baseRepository.save(t);
     }
 
     @Override
@@ -136,12 +136,12 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         t.setEntityState(EntityState.PASSIVE);
         t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
-        repository.save(t);
+        baseRepository.save(t);
     }
 
     @Override
     public long count() {
-        return repository.count();
+        return baseRepository.count();
     }
 
     @Override
@@ -149,12 +149,12 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         t.setEntityState(EntityState.ACTIVE);
         t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
-        return repository.save(t);
+        return baseRepository.save(t);
     }
 
     @Override
     public void deleteReal(T t) {
-        repository.delete(t);
+        baseRepository.delete(t);
     }
 
     @Override
@@ -162,18 +162,18 @@ public class BaseServiceImpl<T extends BaseEntity> implements BaseService<T> {
         t.setEntityState(EntityState.ACTIVE);
         t.setLastUpdatedBy(String.valueOf(securityUtil.getCurrentAuditor()));
         t.setLastUpdatedDate(new Date(System.currentTimeMillis()));
-        return repository.saveAndFlush(t);
+        return baseRepository.saveAndFlush(t);
     }
 
     @Override
     public void realDeleteAll(List<T> list) {
-        repository.deleteAll(list);
+        baseRepository.deleteAll(list);
     }
 
     @Override
     public List<T> findAllActive() {
         GenericSpecification<T> genericSpecification = new GenericSpecification<>();
         genericSpecification.add(new SearchCriteria("entityState", EntityState.ACTIVE, SearchOperation.EQUAL));
-        return repository.findAll(genericSpecification);
+        return baseRepository.findAll(genericSpecification);
     }
 }
