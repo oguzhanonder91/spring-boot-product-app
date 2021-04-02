@@ -27,6 +27,8 @@ public class UserDao {
     @Autowired
     private SecurityUtil securityUtil;
 
+    private final String userRoleCode = "USER";
+
     public User registerNewUserAccount(final UserDto accountDto) {
         if (emailExist(accountDto.getEmail())) {
             throw new BaseException("There is an account with that email adress: " + accountDto.getEmail());
@@ -37,7 +39,7 @@ public class UserDao {
         user.setSurname(accountDto.getSurname());
         user.setEmail(accountDto.getEmail());
         user.setPassword(passwordEncoder.encode(securityUtil.decode(accountDto.getPassword())));
-        user.setRoles(Arrays.asList(roleDao.findByCode(accountDto.getRoleCode())));
+        user.setRoles(Arrays.asList(accountDto.getRoleCode() == null ? roleDao.findByCode(userRoleCode) : roleDao.findByCode(accountDto.getRoleCode())));
         return user;
     }
 
@@ -69,7 +71,7 @@ public class UserDao {
         return user;
     }
 
-    public void changePassword(User user , String password){
+    public void changePassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(securityUtil.decode(password)));
         update(user);
     }

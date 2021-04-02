@@ -25,8 +25,7 @@ public class UserDto {
     @Size(min = 1)
     private String matchingPassword;
 
-    @NotNull
-    @Size(min = 1)
+    @Size(min = 4)
     private String roleCode;
 
     @ValidEmail
