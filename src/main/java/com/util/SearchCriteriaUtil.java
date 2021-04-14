@@ -70,7 +70,7 @@ public final class SearchCriteriaUtil {
             String selectField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : entry.getKey();
             String relation = "root";
             if (fieldArr.length > 1) {
-                String search = "." + selectField;
+                String search = pathSeparator + selectField;
                 relation = "root." + entry.getKey().split(search)[0];
             }
             From from = joinMap.get(relation);

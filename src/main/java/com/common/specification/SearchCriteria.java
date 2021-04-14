@@ -96,7 +96,7 @@ public final class SearchCriteria {
 
             // adding join
             if (fieldArr.length > 1) {
-                String search = "." + filterField;
+                String search = pathSeparator + filterField;
                 relation = root + "." + field.split(search)[0];
                 aliasesMap.add(relation);
             }
@@ -124,7 +124,7 @@ public final class SearchCriteria {
             for (Map.Entry<String, String> entry : fields.entrySet()) {
                 String[] fieldArr = entry.getKey().split(pathSeparator);
                 if (fieldArr.length > 1) {
-                    String search = "." + fieldArr[fieldArr.length - 1];
+                    String search = pathSeparator + fieldArr[fieldArr.length - 1];
                     String relation = root + "." + entry.getKey().split(search)[0];
                     aliasesMap.add(relation);
                 }
@@ -144,7 +144,7 @@ public final class SearchCriteria {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             if (fieldArr.length > 1) {
-                String search = "." + fieldArr[fieldArr.length - 1];
+                String search = pathSeparator + fieldArr[fieldArr.length - 1];
                 relation += "." + field.split(search)[0];
                 aliasesMap.add(relation);
             }
@@ -156,7 +156,7 @@ public final class SearchCriteria {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             if (fieldArr.length > 1) {
-                String search = "." + fieldArr[fieldArr.length - 1];
+                String search = pathSeparator + fieldArr[fieldArr.length - 1];
                 relation += "." + field.split(search)[0];
                 aliasesMap.add(relation);
             }
