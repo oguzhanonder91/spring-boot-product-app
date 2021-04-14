@@ -1,18 +1,11 @@
 package com.common.service;
 
+import com.common.dto.ServiceDto;
 import com.common.entity.Service;
 import com.util.enums.MethodType;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MyService extends BaseService<Service> {
-    Optional<Service> findByPathAndMethod(String path, MethodType methodType);
-
-    List<Service> findByPathNotIn(List<String> paths);
-
-    List<Service> findByKeyNotIn(List<String> keys);
-
-    Optional<Service> findByKeyAndMethod(String key, MethodType methodType);
-
+public interface MyService extends BaseService<Service, ServiceDto> {
 }

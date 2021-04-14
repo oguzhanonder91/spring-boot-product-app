@@ -5,12 +5,17 @@ import com.common.entity.User;
 import com.common.exception.BaseException;
 import com.common.exception.BaseNotFoundException;
 import com.common.service.UserService;
+import com.common.specification.GenericSpecification;
+import com.common.specification.SearchCriteria;
+import com.common.specification.SearchOperation;
 import com.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.awt.desktop.OpenFilesEvent;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class UserDao {
@@ -44,15 +49,20 @@ public class UserDao {
     }
 
     public User save(final User user) {
-        return userService.save(user);
+        return userService.saveForEntity(user);
     }
 
     public boolean emailExist(final String email) {
-        return userService.findByEmail(email) != null;
+        return this.findByEmail(email) != null;
     }
 
     public User findByEmail(final String email) {
-        User user = userService.findByEmail(email);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "email", email)
+                .buildActive();
+        User user = userService.caboryaFindByParamsForEntity(searchCriteria).size() > 0
+                ? userService.caboryaFindByParamsForEntity(searchCriteria).get(0)
+                : null;
         if (user == null) {
             throw new BaseNotFoundException("Not found User -> " + email);
         }
@@ -60,15 +70,15 @@ public class UserDao {
     }
 
     public User update(User user) {
-        return userService.update(user);
+        return userService.updateForEntity(user);
     }
 
     public User findById(String id) {
-        User user = userService.findByIdAndEntityState(id);
-        if (user == null) {
+        Optional<User> user = userService.findByIdActiveForEntity(id);
+        if (!user.isPresent()) {
             throw new BaseNotFoundException("Not found User -> " + id);
         }
-        return user;
+        return user.get();
     }
 
     public void changePassword(User user, String password) {

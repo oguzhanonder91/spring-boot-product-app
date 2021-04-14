@@ -9,7 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface TokenRepository extends BaseRepository<Token> {
-    List<Token> findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(String token, String email, String domain, TokenType tokenType);
-    Optional<Token> findByValueAndTokenTypeAndDomain(String token, TokenType tokenType, String domain);
     void deleteAllByExpiryLessThan(long expiryDate);
 }

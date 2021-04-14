@@ -5,10 +5,13 @@ import com.common.dto.BaseResponse;
 import com.common.entity.Token;
 import com.common.exception.BaseException;
 import com.common.service.TokenService;
+import com.common.specification.SearchCriteria;
+import com.common.specification.SearchOperation;
 import com.util.CommonUtil;
 import com.util.enums.TokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,7 +38,7 @@ public class TokenDao {
     }
 
     public Token create(Token token) {
-        return tokenService.save(token);
+        return tokenService.saveForEntity(token);
     }
 
     public Token prepareRegistrationAndPassword(String email, TokenType tokenType, HttpServletRequest httpServletRequest) {
@@ -56,7 +59,7 @@ public class TokenDao {
         if (!StringUtils.isEmpty(request.getHeader("origin"))) {
             origin = request.getHeader("origin");
         }
-        final List<Token> tokens = tokenService.findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(tokenParam, email, origin, tokenType);
+        final List<Token> tokens = this.findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(tokenParam, email, origin, tokenType);
         return tokens.size() > 0 ? tokens.get(0) : null;
     }
 
@@ -65,13 +68,34 @@ public class TokenDao {
         if (!StringUtils.isEmpty(request.getHeader("origin"))) {
             origin = request.getHeader("origin");
         }
-        final Optional<Token> token = tokenService.findByValueAndTokenTypeAndDomain(tokenParam, tokenType, origin);
+        final Optional<Token> token = this.findByValueAndTokenTypeAndDomain(tokenParam, tokenType, origin);
         return token.orElse(null);
+    }
+
+    public Optional<Token> findByValueAndTokenTypeAndDomain(String tokenParam, TokenType tokenType, String origin) {
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "value", tokenParam)
+                .addFilter(SearchOperation.EQUAL, "tokenType", tokenType)
+                .addFilter(SearchOperation.EQUAL, "domain", origin)
+                .build();
+        List<Token> tokens = tokenService.caboryaFindByParamsForEntity(searchCriteria);
+        return tokens.size() > 0 ? Optional.of(tokens.get(0)) : Optional.empty();
+    }
+
+    public List<Token> findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(String tokenParam, String email, String origin , TokenType tokenType) {
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "value", tokenParam)
+                .addFilter(SearchOperation.EQUAL, "tokenType", tokenType)
+                .addFilter(SearchOperation.EQUAL, "domain", origin)
+                .addFilter(SearchOperation.EQUAL, "email", email)
+                .sort(Sort.Direction.DESC,"createdDate")
+                .build();
+        return tokenService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public void deleteRealToken(Token validToken) {
         if (validToken != null) {
-            tokenService.deleteReal(validToken);
+            tokenService.realDeleteForEntity(validToken);
         }
     }
 
@@ -80,8 +104,8 @@ public class TokenDao {
     }
 
     public ResponseEntity<BaseResponse<String>> controlTokenReturnBaseResponse(Token token, HttpServletRequest httpServletRequest,
-                                                            MessageSource messageSource , String param,
-                                                            String invalidToken,String expired,String valid){
+                                                                               MessageSource messageSource, String param,
+                                                                               String invalidToken, String expired, String valid) {
         BaseResponse<String> baseResponse = new BaseResponse<>();
         baseResponse.setData(param);
         if (token == null) {

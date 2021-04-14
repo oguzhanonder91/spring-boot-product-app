@@ -3,11 +3,14 @@ package com.common.dao;
 import com.common.entity.Permission;
 import com.common.entity.Role;
 import com.common.service.PermissionService;
+import com.common.specification.SearchCriteria;
+import com.common.specification.SearchOperation;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PermissionDao {
@@ -16,34 +19,62 @@ public class PermissionDao {
     private PermissionService permissionService;
 
     public Permission findByTypeAndItemId(PermissionType permissionType, String itemId) {
-        return permissionService.findByTypeAndItemId(permissionType, itemId).orElse(null);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "type", permissionType)
+                .addFilter(SearchOperation.EQUAL, "itemId", itemId)
+                .buildActive();
+
+        List<Permission> permissions = permissionService.caboryaFindByParamsForEntity(searchCriteria);
+        return permissions.size() > 0 ? permissions.get(0) : null;
     }
 
     public Permission save(Permission permission) {
-        return permissionService.save(permission);
+        return permissionService.saveForEntity(permission);
     }
 
     public List<Permission> findByItemIdIn(List<String> items) {
-        return permissionService.findByItemIdIn(items);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.IN, "itemId", items)
+                .buildActive();
+        return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public void realDeleteAll(List<Permission> permissions) {
-        permissionService.realDeleteAll(permissions);
+        permissionService.realDeleteAllForEntity(permissions);
     }
 
     public Permission findByItemIdAndTypeAndRoleCode(String itemId, PermissionType permissionType, String code) {
-        return permissionService.findByItemIdAndTypeAndRoles_Code(itemId, permissionType, code).orElse(null);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "itemId", itemId)
+                .addFilter(SearchOperation.EQUAL, "type", permissionType)
+                .addFilter(SearchOperation.EQUAL, "roles.code", code)
+                .buildActive();
+        List<Permission> permissions = permissionService.caboryaFindByParamsForEntity(searchCriteria);
+        return permissions.size() > 0 ? permissions.get(0) : null;
     }
 
     public List<Permission> findByTypeAndRolesInCode(PermissionType permissionType, List<String> codes) {
-        return permissionService.findByTypeAndRoles_CodeIn(permissionType, codes);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "type", permissionType)
+                .addFilter(SearchOperation.IN, "roles.code", codes)
+                .buildActive();
+        return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles) {
-        return permissionService.findByItemIdAndTypeAndRolesIn(item,permissionType,roles);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "type", permissionType)
+                .addFilter(SearchOperation.EQUAL, "itemId", item)
+                .addFilter(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
+                .buildActive();
+        return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles) {
-        return permissionService.findByTypeAndRolesIn(permissionType, roles);
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL, "type", permissionType)
+                .addFilter(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
+                .buildActive();
+        return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 }

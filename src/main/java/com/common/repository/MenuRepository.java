@@ -9,9 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface MenuRepository extends BaseRepository<Menu> {
-    List<Menu> getAllByParentNullAndEntityState(EntityState state);
-
-    Optional<Menu> findByCodeAndEntityState(String code, EntityState state);
-
-    List<Menu> findByParentNullAndEntityStateAndIdIn(EntityState state, List<String> ids);
 }

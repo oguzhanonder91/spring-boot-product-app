@@ -29,23 +29,23 @@ public class ProductDao {
     }
 
     public Product create(Product product) {
-        return productService.save(product);
+        return productService.saveForEntity(product);
     }
 
     public Product update(Product product) {
-        return productService.update(product);
+        return productService.updateForEntity(product);
     }
 
     public Optional<Product> findById(String id) {
-        return productService.findById(id);
+        return productService.findByIdActiveForEntity(id);
     }
 
     public List<Product> getAllProduct() {
-        return productService.findAll();
+        return productService.findAllForEntity();
     }
 
     public Product sellProduct(Product product) {
-        Optional<Product> p = productService.findById(product.getId());
+        Optional<Product> p = productService.findByIdActiveForEntity(product.getId());
         if (p.isPresent()) {
             p.get().setRemaining(p.get().getRemaining() - product.getSellCount());
             p.get().setSellCount(p.get().getSellCount() + product.getSellCount());
@@ -53,7 +53,7 @@ public class ProductDao {
             p.get().setProfit(p.get().getProfit() + (product.getSellCount() * product.getSellPrice()));
             return p.get();
         } else {
-            throw new BaseNotFoundException("Id Bulunamadı");
+            throw new BaseNotFoundException("Id Not Found");
         }
     }
 

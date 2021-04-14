@@ -1,9 +1,11 @@
 package com.example.dto;
 
+import com.common.dto.BaseDto;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ProductDto {
+public class ProductDto extends BaseDto {
     @NotNull
     @Size(min = 1)
     private String title;

@@ -1,7 +1,9 @@
 package com.example.dto;
 
 
-public class TradeDto {
+import com.common.dto.BaseDto;
+
+public class TradeDto extends BaseDto {
 
     private double sale;
 

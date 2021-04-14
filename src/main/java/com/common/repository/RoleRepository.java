@@ -6,9 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends BaseRepository<Role> {
-
-    Role findByNameAndEntityState(final String name , EntityState state);
-
-    Role findByCodeAndEntityState(final String code, EntityState state);
-
 }

@@ -41,19 +41,19 @@ public class TradeDao {
     }
 
     private Trade getTrade(){
-        List<Trade> tradeList = tradeService.findAll();
+        List<Trade> tradeList = tradeService.findAllForEntity();
         return tradeList.size() > 0 ? tradeList.get(0) : new Trade();
     }
 
     public List<Trade> findAll(){
-        return tradeService.findAll();
+        return tradeService.findAllForEntity();
     }
 
     public Trade update(Trade trade){
-        return tradeService.update(trade);
+        return tradeService.updateForEntity(trade);
     }
 
     public Trade create(Trade trade){
-        return tradeService.save(trade);
+        return tradeService.saveForEntity(trade);
     }
 }

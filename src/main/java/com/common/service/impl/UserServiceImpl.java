@@ -1,5 +1,6 @@
 package com.common.service.impl;
 
+import com.common.dto.UserDto;
 import com.common.entity.User;
 import com.common.repository.UserRepository;
 import com.common.service.UserService;
@@ -9,19 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
+public class UserServiceImpl extends BaseServiceImpl<User, UserDto> implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Override
-    public User findByEmail(final String email) {
-        return userRepository.findByEmailAndEntityState(email, EntityState.ACTIVE);
-    }
-
-    @Override
-    public User findByIdAndEntityState(String id) {
-        return userRepository.findByIdAndEntityState(id, EntityState.ACTIVE);
-    }
 }
 
