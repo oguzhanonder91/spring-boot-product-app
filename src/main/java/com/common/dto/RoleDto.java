@@ -12,17 +12,17 @@ import java.util.Collection;
 public class RoleDto extends BaseDto{
 
     @JsonIgnore
-    private Collection<User> users;
+    private Collection<UserDto> users;
 
     private String name;
 
     private String code;
 
-    public Collection<User> getUsers() {
+    public Collection<UserDto> getUsers() {
         return users;
     }
 
-    public void setUsers(Collection<User> users) {
+    public void setUsers(Collection<UserDto> users) {
         this.users = users;
     }
 

@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,10 +82,10 @@ public final class SearchCriteriaUtil {
 
     private static <R> void rootAndInnerConstructorCreate(List<String> selectFields, Class<R> selectionClass, Map<String, Object> relationMap) {
         /**
-         * setResultClass(KitapDto.class) ve bu dtonun icinde YazarDto var
-         * showField("name","name").showField("basimYili","basimYili").showField("yazar.name","yazar.name")
-         * bu sekilde bir select sorgusu olustugunda ilk once root olan kitapDto ve
-         * inner olan YazarDto nun constructorları olustururlur. relationMap e atilir.
+         * setResultClass(PermissionDto.class) ve bu dtonun icinde RoleDto var
+         * showField("itemId","itemId").showField("id","id").showField("role.code","role.code")
+         * bu sekilde bir select sorgusu olustugunda ilk once root olan permissionDto ve
+         * inner olan RoleDto nun constructorları oluşturulur. relationMap e atilir.
          */
         try {
             for (String field : selectFields) {
@@ -97,18 +98,17 @@ public final class SearchCriteriaUtil {
                         relationMap.put(fieldRelations.get(i), re);
                     }
                     /**
-                     * fieldRelations.size() > 2 root.name durumunda name fieldnin constructor
-                     * olusmasini engellemek icin (fieldRelations.size() - 1 != i) root.yazar.name
-                     * durumunda son field olan name constructor olusmasini engellemek icin
+                     * fieldRelations.size() > 2 root.itemId durumunda itemId fieldin constructor
+                     * olusmasini engellemek icin (fieldRelations.size() - 1 != i) root.role.code
+                     * durumunda son field olan code constructor olusmasini engellemek icin
                      */
                     if (fieldRelations.size() > 2 && !relationMap.containsKey(fieldRelations.get(i)) && (fieldRelations.size() - 1 != i)) {
                         Object rel = relationMap.get(fieldRelations.get(i - 1));
                         Field fieldRel = rel.getClass()
                                 .getDeclaredField(fieldRelations.get(i));
 
-                        Object newRel = fieldRel.getType()
-                                .getDeclaredConstructor()
-                                .newInstance();
+                        Object newRel = controlCollection(fieldRel);
+
                         String search = field.split(pathSeparator + fieldRelations.get(i))[0];
                         String key = search + "." + fieldRelations.get(i);
                         relationMap.put(key, newRel);
@@ -116,8 +116,7 @@ public final class SearchCriteriaUtil {
                 }
             }
 
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException | NoSuchFieldException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
             logger.error(e.getLocalizedMessage());
             logger.debug(e.getLocalizedMessage(), e);
         }
@@ -126,10 +125,10 @@ public final class SearchCriteriaUtil {
     private static void settingFieldsToConstructors(List<String> selectFields, Map<String, Object> relationMap, Tuple o,
                                                     List<Selection<?>> selections) {
         /**
-         * setResultClass(KitapDto.class) ve bu dtonun icinde YazarDto var
-         * showField("name","name").showField("basimYili","basimYili").showField("yazar.name","yazar.name")
-         * name, basimYili, name(yazarDan) fieldlarının ilgili constructorlarina
-         * setlenmesini saglar
+         * setResultClass(PermissionDto.class) ve bu dtonun icinde RoleDto var
+         * showField("itemId","itemId").showField("id","id").showField("role.code","role.code")
+         * itemId, id, code(role '  den ) fieldlarının ilgili constructorlarina
+         * setlenmesini saglanır.
          */
         for (int i = 0; i < selectFields.size(); i++) {
 
@@ -139,7 +138,7 @@ public final class SearchCriteriaUtil {
 
             Object rel = relationMap.get(search);
             try {
-
+                rel = controlObject(rel);
                 Field classField = null;
                 try {
                     classField = rel.getClass()
@@ -164,9 +163,9 @@ public final class SearchCriteriaUtil {
 
     private static void settingInnerDtosToRoot(Map<String, Object> relationMap) {
         /**
-         * setResultClass(KitapDto.class) ve bu dtonun icinde YazarDto var
-         * showField("name","name").showField("basimYili","basimYili").showField("yazar.name","yazar.name")
-         * olusturulan inner dto olan yazarDtonun roota setlenmesi
+         * setResultClass(PermissionDto.class) ve bu dtonun icinde RoleDto var
+         * showField("itemId","itemId").showField("id","id").showField("role.code","role.code")
+         * olusturulan inner dtonun roota setlenmesi
          */
         try {
             for (Map.Entry<String, Object> map : relationMap.entrySet()) {
@@ -212,6 +211,47 @@ public final class SearchCriteriaUtil {
 
     private static From join(From from, String s) {
         return from.join(s);
+    }
+
+    private static Object controlCollection(Field field) {
+        Object newObj = null;
+        Class<?> clazz;
+        Object arrObj;
+        String className = field.toGenericString().split("<")[1].split(">")[0];
+        try {
+            if (field.getType().getName().equals("java.util.Collection")
+                    || field.getType().getName().equals("java.util.List")
+                    || field.getType().getName().equals("java.util.ArrayList")) {
+                clazz = Class.forName(className);
+                arrObj = clazz.getDeclaredConstructor().newInstance();
+                newObj = new ArrayList<>(Arrays.asList(arrObj));
+            } else if (field.getType().getName().equals("java.util.Set")
+                    || field.getType().getName().equals("java.util.HashSet")) {
+                clazz = Class.forName(className);
+                arrObj = clazz.getDeclaredConstructor().newInstance();
+                newObj = new HashSet<>(Arrays.asList(arrObj));
+            } else {
+                newObj = field.getType()
+                        .getDeclaredConstructor()
+                        .newInstance();
+            }
+        } catch (ClassNotFoundException |
+                NoSuchMethodException |
+                InvocationTargetException |
+                InstantiationException |
+                IllegalAccessException ex) {
+            logger.error(ex.getLocalizedMessage());
+        }
+        return newObj;
+    }
+
+    private static Object controlObject(Object rel) {
+        if (rel instanceof ArrayList) {
+            return ((ArrayList<?>) rel).get(0);
+        } else if (rel instanceof HashSet) {
+            return ((HashSet<?>) rel).toArray()[0];
+        }
+        return rel;
     }
 
 }

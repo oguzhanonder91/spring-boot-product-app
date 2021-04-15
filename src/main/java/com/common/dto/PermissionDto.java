@@ -17,9 +17,9 @@ public class PermissionDto extends BaseDto{
 
     private String itemId;
 
-    private Collection<Role> roles;
+    private Collection<RoleDto> roles;
 
-    private Collection<User> users;
+    private Collection<UserDto> users;
 
     public String getItemId() {
         return itemId;
@@ -29,19 +29,19 @@ public class PermissionDto extends BaseDto{
         this.itemId = itemId;
     }
 
-    public Collection<Role> getRoles() {
+    public Collection<RoleDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(Collection<RoleDto> roles) {
         this.roles = roles;
     }
 
-    public Collection<User> getUsers() {
+    public Collection<UserDto> getUsers() {
         return users;
     }
 
-    public void setUsers(Collection<User> users) {
+    public void setUsers(Collection<UserDto> users) {
         this.users = users;
     }
 

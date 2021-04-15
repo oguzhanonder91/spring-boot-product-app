@@ -19,7 +19,7 @@ public class ServiceDto extends BaseDto {
 
     private String serviceKey;
 
-    private ServiceGroup serviceGroup;
+    private ServiceGroupDto serviceGroup;
 
     public String getPath() {
         return path;
@@ -53,11 +53,11 @@ public class ServiceDto extends BaseDto {
         this.serviceKey = serviceKey;
     }
 
-    public ServiceGroup getServiceGroup() {
+    public ServiceGroupDto getServiceGroup() {
         return serviceGroup;
     }
 
-    public void setServiceGroup(ServiceGroup serviceGroup) {
+    public void setServiceGroup(ServiceGroupDto serviceGroup) {
         this.serviceGroup = serviceGroup;
     }
 }

@@ -24,7 +24,7 @@ public class MenuDto extends BaseDto{
 
     private int orderItem;
 
-    private List<Menu> children;
+    private List<MenuDto> children;
 
     private String parent;
 
@@ -70,11 +70,11 @@ public class MenuDto extends BaseDto{
         this.orderItem = orderItem;
     }
 
-    public List<Menu> getChildren() {
+    public List<MenuDto> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Menu> children) {
+    public void setChildren(List<MenuDto> children) {
         this.children = children;
     }
 

@@ -77,4 +77,15 @@ public class PermissionDao {
                 .buildActive();
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
+
+    public List<Permission> findBy() {
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.EQUAL,"type",PermissionType.SERVICE)
+                .showField("itemId")
+                .showField("roles.code")
+                .showField("roles.entityState")
+                .showField("roles.id")
+                .buildActive();
+        return permissionService.caboryaFindByParams(searchCriteria);
+    }
 }
