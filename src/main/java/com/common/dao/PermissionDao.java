@@ -1,5 +1,6 @@
 package com.common.dao;
 
+import com.common.dto.PermissionDto;
 import com.common.entity.Permission;
 import com.common.entity.Role;
 import com.common.service.PermissionService;
@@ -78,7 +79,7 @@ public class PermissionDao {
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
-    public List<Permission> findBy() {
+    public List<PermissionDto> findBy() {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
                 .addFilter(SearchOperation.EQUAL,"type",PermissionType.SERVICE)
                 .showField("itemId")
