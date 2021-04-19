@@ -11,6 +11,7 @@ spring:
   jpa:
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate.ddl-auto: update
+    show-sql: true
   main:
     lazy-initialization: true
   mail:

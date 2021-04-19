@@ -1,11 +1,13 @@
 package com.common.dto;
 
+import com.common.entity.Role;
 import com.util.validation.PasswordMatches;
 import com.util.validation.ValidEmail;
 import com.util.validation.ValidPassword;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 @PasswordMatches
 public class UserDto extends BaseDto {
@@ -25,8 +27,7 @@ public class UserDto extends BaseDto {
     @Size(min = 1)
     private String matchingPassword;
 
-    @Size(min = 4)
-    private String roleCode;
+    private Collection<RoleDto> roles;
 
     @ValidEmail
     @NotNull
@@ -73,11 +74,11 @@ public class UserDto extends BaseDto {
         this.email = email;
     }
 
-    public String getRoleCode() {
-        return roleCode;
+    public Collection<RoleDto> getRoles() {
+        return roles;
     }
 
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
+    public void setRoles(Collection<RoleDto> roles) {
+        this.roles = roles;
     }
 }

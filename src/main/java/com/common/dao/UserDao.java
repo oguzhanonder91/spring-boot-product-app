@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.awt.desktop.OpenFilesEvent;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UserDao {
@@ -44,7 +45,11 @@ public class UserDao {
         user.setSurname(accountDto.getSurname());
         user.setEmail(accountDto.getEmail());
         user.setPassword(passwordEncoder.encode(securityUtil.decode(accountDto.getPassword())));
-        user.setRoles(Arrays.asList(accountDto.getRoleCode() == null ? roleDao.findByCode(userRoleCode) : roleDao.findByCode(accountDto.getRoleCode())));
+        if (accountDto.getRoles() == null && accountDto.getRoles().isEmpty()) {
+            user.setRoles(Arrays.asList(roleDao.findByCode(userRoleCode)));
+        } else {
+            user.setRoles(roleDao.findByCode(accountDto.getRoles().stream().map(m -> m.getCode()).collect(Collectors.toList())));
+        }
         return user;
     }
 

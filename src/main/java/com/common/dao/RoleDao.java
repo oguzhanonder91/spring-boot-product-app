@@ -27,6 +27,13 @@ public class RoleDao {
         return roles.size() > 0 ? roles.get(0) : null;
     }
 
+    public List<Role> findByCode(List<String> codes) {
+        SearchCriteria searchCriteria = new SearchCriteria.Builder()
+                .addFilter(SearchOperation.IN, "code", codes)
+                .buildActive();
+        return roleService.caboryaFindByParamsForEntity(searchCriteria);
+    }
+
     public Role findByName(String name) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
                 .addFilter(SearchOperation.EQUAL, "name", name)

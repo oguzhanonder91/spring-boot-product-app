@@ -102,16 +102,24 @@ public final class SearchCriteriaUtil {
                      * olusmasini engellemek icin (fieldRelations.size() - 1 != i) root.role.code
                      * durumunda son field olan code constructor olusmasini engellemek icin
                      */
-                    if (fieldRelations.size() > 2 && !relationMap.containsKey(fieldRelations.get(i)) && (fieldRelations.size() - 1 != i)) {
-                        Object rel = relationMap.get(fieldRelations.get(i - 1));
-                        Field fieldRel = rel.getClass()
-                                .getDeclaredField(fieldRelations.get(i));
+                    if (fieldRelations.size() > 2 && fieldRelations.size() - 1 != i) {
+                        String tempKey = "root";
+                        for (int j = 1; j <= i; j++) {
+                            tempKey = tempKey + "." + fieldRelations.get(j);
+                        }
+                        if (!relationMap.containsKey(tempKey)) {
+                            String mapKey = tempKey.split(pathSeparator + fieldRelations.get(i))[0];
+                            Object rel = relationMap.get(mapKey);
+                            rel = controlObject(rel);
+                            Field fieldRel = rel.getClass()
+                                    .getDeclaredField(fieldRelations.get(i));
 
-                        Object newRel = controlCollection(fieldRel);
+                            Object newRel = controlCollection(fieldRel);
+                            String search = field.split(pathSeparator + fieldRelations.get(i))[0];
+                            String key = search + "." + fieldRelations.get(i);
+                            relationMap.put(key, newRel);
+                        }
 
-                        String search = field.split(pathSeparator + fieldRelations.get(i))[0];
-                        String key = search + "." + fieldRelations.get(i);
-                        relationMap.put(key, newRel);
                     }
                 }
             }
@@ -175,11 +183,12 @@ public final class SearchCriteriaUtil {
                         String search = map.getKey().split(pathSeparator + key[i])[0];
 
                         Object rel = relationMap.get(search);
+                        rel = controlObject(rel);
                         Field classField = rel
                                 .getClass()
                                 .getDeclaredField(key[i]);
 
-                        Object setter = relationMap.get("root." + key[i]);
+                        Object setter = relationMap.get(search + "." + key[i]);
 
                         classField.setAccessible(true);
                         classField.set(rel, setter);

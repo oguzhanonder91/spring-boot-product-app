@@ -11,14 +11,11 @@ public class BaseResponse<T> implements Serializable {
 
     private String key ;
 
-    private List<T> dataList;
-
     private T data;
 
-    public BaseResponse(String message, String key, List<T> dataList, T data) {
+    public BaseResponse(String message, String key, T data) {
         this.message = message;
         this.key = key;
-        this.dataList = dataList;
         this.data = data;
     }
 
@@ -31,14 +28,6 @@ public class BaseResponse<T> implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public List<T> getDataList() {
-        return dataList;
-    }
-
-    public void setDataList(List<T> dataList) {
-        this.dataList = dataList;
     }
 
     public T getData() {
