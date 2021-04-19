@@ -45,7 +45,7 @@ public class UserDao {
         user.setSurname(accountDto.getSurname());
         user.setEmail(accountDto.getEmail());
         user.setPassword(passwordEncoder.encode(securityUtil.decode(accountDto.getPassword())));
-        if (accountDto.getRoles() == null && accountDto.getRoles().isEmpty()) {
+        if (accountDto.getRoles() == null || accountDto.getRoles().isEmpty()) {
             user.setRoles(Arrays.asList(roleDao.findByCode(userRoleCode)));
         } else {
             user.setRoles(roleDao.findByCode(accountDto.getRoles().stream().map(m -> m.getCode()).collect(Collectors.toList())));
