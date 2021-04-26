@@ -54,7 +54,7 @@ public final class SearchCriteriaUtil {
     }
 
     public static List<Predicate> and(LinkedHashMap<String, List<BaseSpecificationFilter>> filtersMap, Map<String, From> joinMap,
-                                           CriteriaBuilder builder) {
+                                      CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
         for (Map.Entry<String, List<BaseSpecificationFilter>> entry : filtersMap.entrySet()) {
             From from = joinMap.get(entry.getKey());
@@ -65,20 +65,20 @@ public final class SearchCriteriaUtil {
     }
 
     public static List<Predicate> or(LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap, Map<String, From> joinMap,
-                                          CriteriaBuilder builder) {
+                                     CriteriaBuilder builder) {
         List<Predicate> predicates = new ArrayList<>();
-        if(orsMap.entrySet().size() > 1){
-            Map.Entry<String, List<BaseSpecificationFilter>> entry1 = ((Map.Entry)orsMap.entrySet().toArray()[0]);
-            Map.Entry<String, List<BaseSpecificationFilter>> entry2 = ((Map.Entry)orsMap.entrySet().toArray()[1]);
+        if (orsMap.entrySet().size() > 1) {
+            Map.Entry<String, List<BaseSpecificationFilter>> entry1 = ((Map.Entry) orsMap.entrySet().toArray()[0]);
+            Map.Entry<String, List<BaseSpecificationFilter>> entry2 = ((Map.Entry) orsMap.entrySet().toArray()[1]);
             From from1 = joinMap.get(entry1.getKey());
             From from2 = joinMap.get(entry2.getKey());
             predicates.add(builder.and(
                     builder.or(
                             entry1.getValue().get(0).getSearchOperation().predicate(builder, entry1.getValue().get(0).getField(), entry1.getValue().get(0).getValue(), from1),
                             entry2.getValue().get(0).getSearchOperation().predicate(builder, entry2.getValue().get(0).getField(), entry2.getValue().get(0).getValue(), from2))));
-        }else{
+        } else {
             for (Map.Entry<String, List<BaseSpecificationFilter>> entry : orsMap.entrySet()) {
-                if(entry.getValue().size() > 1){
+                if (entry.getValue().size() > 1) {
                     From from = joinMap.get(entry.getKey());
                     predicates.add(builder.and(
                             builder.or(
@@ -230,8 +230,9 @@ public final class SearchCriteriaUtil {
     public static <R> List<R> mapForSelectionFields(List<Tuple> resultList, Class<R> selectionClass, List<Selection<?>> selections) {
         List<R> result = new ArrayList();
         List<String> selectFields = selections.stream().map(item -> "root." + item.getAlias()).collect(Collectors.toList());
-        Map<String, Object> relationMap = new HashMap();
         for (Tuple o : resultList) {
+            Map<String, Object> relationMap = new HashMap();
+
             rootAndInnerConstructorCreate(selectFields, selectionClass, relationMap);
 
             settingFieldsToConstructors(selectFields, relationMap, o, selections);
