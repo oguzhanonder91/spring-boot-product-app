@@ -58,16 +58,21 @@ public class UserDao {
     }
 
     public boolean emailExist(final String email) {
-        return this.findByEmail(email) != null;
+        return this.findUser(email) != null;
     }
 
-    public User findByEmail(final String email) {
+    private User findUser(String email) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
                 .addFilter(SearchOperation.EQUAL, "email", email)
                 .buildActive();
         User user = userService.caboryaFindByParamsForEntity(searchCriteria).size() > 0
                 ? userService.caboryaFindByParamsForEntity(searchCriteria).get(0)
                 : null;
+        return user;
+    }
+
+    public User findByEmail(final String email) {
+        User user = this.findUser(email);
         if (user == null) {
             throw new BaseNotFoundException("Not found User -> " + email);
         }

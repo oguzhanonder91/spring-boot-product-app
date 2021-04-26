@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -19,7 +18,9 @@ public final class SearchCriteria {
     private Sort sort;
     private Set<String> aliasesSet = new HashSet<>();
     private LinkedHashMap<String, List<BaseSpecificationFilter>> filtersMap = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
     private LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
+    private boolean distinct;
     private Class resultClass;
 
     private static final String pathSeparator =  "\\.";
@@ -77,12 +78,30 @@ public final class SearchCriteria {
         this.resultClass = resultClass;
     }
 
+    public LinkedHashMap<String, List<BaseSpecificationFilter>> getOrsMap() {
+        return orsMap;
+    }
+
+    public void setOrsMap(LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap) {
+        this.orsMap = orsMap;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    public void setDistinct(boolean distinct) {
+        this.distinct = distinct;
+    }
+
     public static class Builder {
         private final List<Sort.Order> orders = new ArrayList<>();
         private Pageable pageable;
         private final Set<String> aliasesMap = new HashSet<>();
         private final LinkedHashMap<String, List<BaseSpecificationFilter>> filtersMap = new LinkedHashMap<>();
+        private final LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
         private LinkedHashMap<String, String> fields = new LinkedHashMap<>();
+        private boolean distinct;
         private Class resultClass;
 
         public Builder() {
@@ -118,6 +137,35 @@ public final class SearchCriteria {
 
         public Builder addFilter(SearchOperation searchOperation, String field) {
             return addFilter(searchOperation, field, null);
+        }
+
+        public Builder or(SearchOperation searchOperation1, String field1, Object value1,SearchOperation searchOperation2, String field2, Object value2) {
+            or(searchOperation1,field1,value1);
+            or(searchOperation2,field2,value2);
+            return this;
+        }
+
+        private Builder or(SearchOperation searchOperation, String field, Object value) {
+            String[] fieldArr = field.split(pathSeparator);
+            String relation= root;
+            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
+
+            // adding join
+            if (fieldArr.length > 1) {
+                String search = pathSeparator + filterField;
+                relation = root + "." + field.split(search)[0];
+                aliasesMap.add(relation);
+            }
+            // or operation
+            BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
+            if (orsMap.containsKey(relation)) {
+                orsMap.get(relation).add(filterDto);
+            } else {
+                List<BaseSpecificationFilter> adaletCoreSpecificationFilters = new ArrayList<>();
+                adaletCoreSpecificationFilters.add(filterDto);
+                orsMap.put(relation, adaletCoreSpecificationFilters);
+            }
+            return this;
         }
 
         public Builder showFields(LinkedHashMap<String, String> fields) {
@@ -164,6 +212,11 @@ public final class SearchCriteria {
             return this;
         }
 
+        public Builder distinct() {
+            this.distinct = true;
+            return this;
+        }
+
         public Builder sort(Sort.Direction type, String field) {
             Sort.Order order = null;
             if (type.isAscending()) {
@@ -200,6 +253,8 @@ public final class SearchCriteria {
             searchCriteria.setAliasesSet(this.aliasesMap);
             searchCriteria.setFiltersMap(this.filtersMap);
             searchCriteria.setFieldsMap(this.fields);
+            searchCriteria.setOrsMap(this.orsMap);
+            searchCriteria.setDistinct(this.distinct);
             searchCriteria.setResultClass(this.resultClass);
             return searchCriteria;
         }

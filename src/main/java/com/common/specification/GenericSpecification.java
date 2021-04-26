@@ -22,10 +22,9 @@ public class GenericSpecification<T> implements Specification<T> {
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder builder) {
-        return builder
-                .and(SearchCriteriaUtil
-                        .where(searchCriteria.getFiltersMap(),
-                                SearchCriteriaUtil.join(searchCriteria.getAliasesSet(), root), builder)
-                        .toArray(new Predicate[0]));
+        List<Predicate> predicatesAnd = SearchCriteriaUtil.and(searchCriteria.getFiltersMap(), SearchCriteriaUtil.join(searchCriteria.getAliasesSet(),root) ,builder);
+        List<Predicate> predicatesOr = SearchCriteriaUtil.or(searchCriteria.getOrsMap(), SearchCriteriaUtil.join(searchCriteria.getAliasesSet(),root) ,builder);
+        predicatesAnd.addAll(predicatesOr);
+        return builder.and(predicatesAnd.toArray(new Predicate[0]));
     }
 }

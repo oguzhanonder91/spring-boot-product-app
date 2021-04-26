@@ -21,6 +21,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,8 +50,13 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
 
         List<Selection<?>> selections = SearchCriteriaUtil.select(searchCriteria.getFieldsMap(), joinMap);
         cq.multiselect(selections);
+        cq.distinct(searchCriteria.isDistinct());
 
-        List<Predicate> predicates = SearchCriteriaUtil.where(searchCriteria.getFiltersMap(), joinMap, cb);
+        List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> predicatesAnd = SearchCriteriaUtil.and(searchCriteria.getFiltersMap(), joinMap, cb);
+        List<Predicate> predicatesOr = SearchCriteriaUtil.or(searchCriteria.getOrsMap(), joinMap, cb);
+        predicates.addAll(predicatesOr);
+        predicates.addAll(predicatesAnd);
         cq.where(predicates.toArray(new Predicate[0]));
 
         cq.orderBy(QueryUtils.toOrders(searchCriteria.getSort(), root, cb));
