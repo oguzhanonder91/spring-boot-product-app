@@ -17,7 +17,7 @@ public class ServiceGroupDao {
 
     public List<ServiceGroup> findByPath(String path) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL,"path",path)
+                .and(SearchOperation.EQUAL,"path",path)
                 .buildActive();
         return serviceGroupService.caboryaFindByParamsForEntity(searchCriteria);
     }
@@ -28,7 +28,7 @@ public class ServiceGroupDao {
 
     public List<ServiceGroup> findByPathNotIn(List<String> paths) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.NOT_IN,"path",paths)
+                .and(SearchOperation.NOT_IN,"path",paths)
                 .buildActive();
         return serviceGroupService.caboryaFindByParamsForEntity(searchCriteria);
     }
@@ -39,15 +39,15 @@ public class ServiceGroupDao {
 
     public List<ServiceGroup> findByKeyNotIn(List<String> keys) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.NOT_IN,"serviceGroupKey",keys)
+                .and(SearchOperation.NOT_IN,"serviceGroupKey",keys)
                 .buildActive();
         return serviceGroupService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public ServiceGroup findByKeyAndPath(String key,String path) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL,"serviceGroupKey",key)
-                .addFilter(SearchOperation.EQUAL,"path",path)
+                .and(SearchOperation.EQUAL,"serviceGroupKey",key)
+                .and(SearchOperation.EQUAL,"path",path)
                 .buildActive();
         List<ServiceGroup> serviceGroups = serviceGroupService.caboryaFindByParamsForEntity(searchCriteria);
         return serviceGroups.size() > 0 ? serviceGroups.get(0) : null;

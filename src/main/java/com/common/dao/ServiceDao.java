@@ -18,8 +18,8 @@ public class ServiceDao {
 
     public Service findByPathAndMethod(String path, MethodType methodType) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "path", path)
-                .addFilter(SearchOperation.EQUAL, "method", methodType)
+                .and(SearchOperation.EQUAL, "path", path)
+                .and(SearchOperation.EQUAL, "method", methodType)
                 .buildActive();
         List<Service> services = myService.caboryaFindByParamsForEntity(searchCriteria);
         return services.size() > 0 ? services.get(0) : null;
@@ -31,7 +31,7 @@ public class ServiceDao {
 
     public List<Service> findByPathNotIn(List<String> paths) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.NOT_IN, "path", paths)
+                .and(SearchOperation.NOT_IN, "path", paths)
                 .buildActive();
         return myService.caboryaFindByParamsForEntity(searchCriteria);
     }
@@ -42,15 +42,15 @@ public class ServiceDao {
 
     public List<Service> findByKeyNotIn(List<String> keys) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.NOT_IN, "serviceKey", keys)
+                .and(SearchOperation.NOT_IN, "serviceKey", keys)
                 .buildActive();
         return myService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public Service findByKeyAndMethod(String key, MethodType methodType) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "serviceKey", key)
-                .addFilter(SearchOperation.EQUAL, "method", methodType)
+                .and(SearchOperation.EQUAL, "serviceKey", key)
+                .and(SearchOperation.EQUAL, "method", methodType)
                 .buildActive();
         List<Service> services = myService.caboryaFindByParamsForEntity(searchCriteria);
         return services.size() > 0 ? services.get(0) : null;

@@ -8,8 +8,10 @@ import com.common.specification.SearchCriteria;
 import com.common.specification.SearchOperation;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +23,8 @@ public class PermissionDao {
 
     public Permission findByTypeAndItemId(PermissionType permissionType, String itemId) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "type", permissionType)
-                .addFilter(SearchOperation.EQUAL, "itemId", itemId)
+                .and(SearchOperation.EQUAL, "type", permissionType)
+                .and(SearchOperation.EQUAL, "itemId", itemId)
                 .buildActive();
 
         List<Permission> permissions = permissionService.caboryaFindByParamsForEntity(searchCriteria);
@@ -35,7 +37,7 @@ public class PermissionDao {
 
     public List<Permission> findByItemIdIn(List<String> items) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IN, "itemId", items)
+                .and(SearchOperation.IN, "itemId", items)
                 .buildActive();
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
@@ -46,9 +48,9 @@ public class PermissionDao {
 
     public Permission findByItemIdAndTypeAndRoleCode(String itemId, PermissionType permissionType, String code) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "itemId", itemId)
-                .addFilter(SearchOperation.EQUAL, "type", permissionType)
-                .addFilter(SearchOperation.EQUAL, "roles.code", code)
+                .and(SearchOperation.EQUAL, "itemId", itemId)
+                .and(SearchOperation.EQUAL, "type", permissionType)
+                .and(SearchOperation.EQUAL, "roles.code", code)
                 .buildActive();
         List<Permission> permissions = permissionService.caboryaFindByParamsForEntity(searchCriteria);
         return permissions.size() > 0 ? permissions.get(0) : null;
@@ -56,39 +58,36 @@ public class PermissionDao {
 
     public List<Permission> findByTypeAndRolesInCode(PermissionType permissionType, List<String> codes) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "type", permissionType)
-                .addFilter(SearchOperation.IN, "roles.code", codes)
+                .and(SearchOperation.EQUAL, "type", permissionType)
+                .and(SearchOperation.IN, "roles.code", codes)
                 .buildActive();
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public List<Permission> findByItemIdAndTypeAndRolesIn(String item , PermissionType permissionType, List<Role> roles) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "type", permissionType)
-                .addFilter(SearchOperation.EQUAL, "itemId", item)
-                .addFilter(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
+                .and(SearchOperation.EQUAL, "type", permissionType)
+                .and(SearchOperation.EQUAL, "itemId", item)
+                .and(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
                 .buildActive();
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public List<Permission> findByTypeAndRolesIn(PermissionType permissionType, List<Role> roles) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "type", permissionType)
-                .addFilter(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
+                .and(SearchOperation.EQUAL, "type", permissionType)
+                .and(SearchOperation.IN, "roles.id", roles.stream().map(i->i.getId()).collect(Collectors.toList()))
                 .buildActive();
         return permissionService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public List<PermissionDto> findBy() {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL,"type",PermissionType.SERVICE)
-                .showField("itemId")
+                .and(SearchOperation.EQUAL,"type",PermissionType.SERVICE)
                 .showField("id")
-                .showField("type")
-                .showField("roles.code")
-                .showField("users.roles.code")
-                .showField("users.name")
-                .or(SearchOperation.EQUAL,"roles.code","USER",SearchOperation.EQUAL,"users.name","ADMIN")
+                .showField("itemId")
+                .showField("roles.name")
+                .showField("roles.id")
                 .buildActive();
         return permissionService.caboryaFindByParams(searchCriteria);
     }

@@ -63,7 +63,7 @@ public class UserDao {
 
     private User findUser(String email) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "email", email)
+                .and(SearchOperation.EQUAL, "email", email)
                 .buildActive();
         User user = userService.caboryaFindByParamsForEntity(searchCriteria).size() > 0
                 ? userService.caboryaFindByParamsForEntity(searchCriteria).get(0)

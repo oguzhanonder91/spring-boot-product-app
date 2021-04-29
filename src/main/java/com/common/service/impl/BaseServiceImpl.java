@@ -200,8 +200,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public Optional<T> findByIdActiveForEntity(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
 
         return baseRepository.findOne(specification);
@@ -210,8 +210,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public Optional<T> findByIdPassiveForEntity(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
 
         return baseRepository.findOne(specification);
@@ -220,7 +220,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public Optional<T> findByIdForEntity(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
 
         return baseRepository.findOne(specification);
@@ -256,7 +256,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllActiveForEntity() {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
 
         return baseRepository.findAll(specification);
@@ -265,7 +265,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllPassiveForEntity() {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
 
         return baseRepository.findAll(specification);
@@ -301,7 +301,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllActiveForEntity(Sort sort) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
 
         return baseRepository.findAll(specification, sort);
@@ -310,7 +310,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllPassiveForEntity(Sort sort) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
 
         return baseRepository.findAll(specification, sort);
@@ -348,7 +348,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public Page<T> findAllActiveForEntity(Pageable pageable) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
 
         return baseRepository.findAll(specification, pageable);
@@ -357,7 +357,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public Page<T> findAllPassiveForEntity(Pageable pageable) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
 
         return baseRepository.findAll(specification, pageable);
@@ -395,8 +395,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllActiveForEntity(List<String> ids) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IN, "id", ids)
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.IN, "id", ids)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
 
         return baseRepository.findAll(specification);
@@ -405,8 +405,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllPassiveForEntity(List<String> ids) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IN, "id", ids)
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.IN, "id", ids)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
 
         return baseRepository.findAll(specification);
@@ -415,7 +415,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllForEntity(List<String> ids) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IN, "id", ids)
+                .and(SearchOperation.IN, "id", ids)
                 .build());
 
         return baseRepository.findAll(specification);
@@ -465,7 +465,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllActiveForEntity(Sort.Direction type, String field) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .sort(type, field)
                 .build();
         GenericSpecification<T> specification = new GenericSpecification<>(searchCriteria);
@@ -476,7 +476,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllPassiveForEntity(Sort.Direction type, String field) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .sort(type, field)
                 .build();
         GenericSpecification<T> specification = new GenericSpecification<>(searchCriteria);
@@ -518,7 +518,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllActiveForEntity(Integer page, Integer pageSize, Sort sort) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
 
         return baseRepository.findAll(specification, PageRequest.of(page, pageSize, sort)).getContent();
@@ -527,7 +527,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public List<T> findAllPassiveForEntity(Integer page, Integer pageSize, Sort sort) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
 
         return baseRepository.findAll(specification, PageRequest.of(page, pageSize, sort)).getContent();
@@ -565,7 +565,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public long countActive() {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
                 .build());
         return baseRepository.count(specification);
     }
@@ -573,7 +573,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public long countPassive() {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
                 .build());
         return baseRepository.count(specification);
     }
@@ -588,8 +588,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public boolean existsActive(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.ACTIVE)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
         return baseRepository.findOne(specification).isPresent();
     }
@@ -597,8 +597,8 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public boolean existsPassive(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "entityState", EntityState.PASSIVE)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
         return baseRepository.findOne(specification).isPresent();
     }
@@ -606,7 +606,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     @Override
     public boolean exists(String id) {
         GenericSpecification<T> specification = new GenericSpecification<>(new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "id", id)
+                .and(SearchOperation.EQUAL, "id", id)
                 .build());
         return baseRepository.findOne(specification).isPresent();
     }

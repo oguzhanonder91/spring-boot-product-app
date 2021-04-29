@@ -108,7 +108,7 @@ public final class SearchCriteria {
             aliasesMap.add(root);
         }
 
-        public Builder addFilter(SearchOperation searchOperation, String field, Object value) {
+        public Builder and(SearchOperation searchOperation, String field, Object value) {
             String[] fieldArr = field.split(pathSeparator);
             String relation= root;
             String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
@@ -131,12 +131,12 @@ public final class SearchCriteria {
             return this;
         }
 
-        public Builder addFilter(SearchOperation searchOperation, String field, Object from, Object to) {
-            return addFilter(searchOperation, field, new SearchBetween(from, to));
+        public Builder and(SearchOperation searchOperation, String field, Object from, Object to) {
+            return and(searchOperation, field, new SearchBetween(from, to));
         }
 
-        public Builder addFilter(SearchOperation searchOperation, String field) {
-            return addFilter(searchOperation, field, null);
+        public Builder and(SearchOperation searchOperation, String field) {
+            return and(searchOperation, field, null);
         }
 
         public Builder or(SearchOperation searchOperation1, String field1, Object value1,SearchOperation searchOperation2, String field2, Object value2) {

@@ -74,9 +74,9 @@ public class TokenDao {
 
     public Optional<Token> findByValueAndTokenTypeAndDomain(String tokenParam, TokenType tokenType, String origin) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "value", tokenParam)
-                .addFilter(SearchOperation.EQUAL, "tokenType", tokenType)
-                .addFilter(SearchOperation.EQUAL, "domain", origin)
+                .and(SearchOperation.EQUAL, "value", tokenParam)
+                .and(SearchOperation.EQUAL, "tokenType", tokenType)
+                .and(SearchOperation.EQUAL, "domain", origin)
                 .build();
         List<Token> tokens = tokenService.caboryaFindByParamsForEntity(searchCriteria);
         return tokens.size() > 0 ? Optional.of(tokens.get(0)) : Optional.empty();
@@ -84,10 +84,10 @@ public class TokenDao {
 
     public List<Token> findByValueAndEmailAndDomainAndTokenTypeOrderByCreatedDateDesc(String tokenParam, String email, String origin , TokenType tokenType) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "value", tokenParam)
-                .addFilter(SearchOperation.EQUAL, "tokenType", tokenType)
-                .addFilter(SearchOperation.EQUAL, "domain", origin)
-                .addFilter(SearchOperation.EQUAL, "email", email)
+                .and(SearchOperation.EQUAL, "value", tokenParam)
+                .and(SearchOperation.EQUAL, "tokenType", tokenType)
+                .and(SearchOperation.EQUAL, "domain", origin)
+                .and(SearchOperation.EQUAL, "email", email)
                 .sort(Sort.Direction.DESC,"createdDate")
                 .build();
         return tokenService.caboryaFindByParamsForEntity(searchCriteria);

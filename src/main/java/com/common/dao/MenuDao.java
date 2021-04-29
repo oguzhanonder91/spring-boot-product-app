@@ -29,14 +29,14 @@ public class MenuDao {
 
     public List<Menu> getAllByParentNull() {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IS_NULL, "parent")
+                .and(SearchOperation.IS_NULL, "parent")
                 .buildActive();
         return menuService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public Menu findByCode(String code) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "code",code)
+                .and(SearchOperation.EQUAL, "code",code)
                 .buildActive();
         List<Menu> menus =  menuService.caboryaFindByParamsForEntity(searchCriteria);
         return menus.size() > 0 ? menus.get(0) : null;
@@ -44,8 +44,8 @@ public class MenuDao {
 
     public List<Menu> getMenusOfUser(List<String> ids) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IS_NULL, "parent")
-                .addFilter(SearchOperation.IN,"id",ids)
+                .and(SearchOperation.IS_NULL, "parent")
+                .and(SearchOperation.IN,"id",ids)
                 .buildActive();
         List<Menu> menus = menuService.caboryaFindByParamsForEntity(searchCriteria);
         for (Menu menu : menus) {

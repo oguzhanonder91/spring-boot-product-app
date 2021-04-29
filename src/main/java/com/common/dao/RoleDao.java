@@ -21,7 +21,7 @@ public class RoleDao {
 
     public Role findByCode(String code) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "code", code)
+                .and(SearchOperation.EQUAL, "code", code)
                 .buildActive();
         List<Role> roles =  roleService.caboryaFindByParamsForEntity(searchCriteria);
         return roles.size() > 0 ? roles.get(0) : null;
@@ -29,14 +29,14 @@ public class RoleDao {
 
     public List<Role> findByCode(List<String> codes) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.IN, "code", codes)
+                .and(SearchOperation.IN, "code", codes)
                 .buildActive();
         return roleService.caboryaFindByParamsForEntity(searchCriteria);
     }
 
     public Role findByName(String name) {
         SearchCriteria searchCriteria = new SearchCriteria.Builder()
-                .addFilter(SearchOperation.EQUAL, "name", name)
+                .and(SearchOperation.EQUAL, "name", name)
                 .buildActive();
         List<Role> roles =  roleService.caboryaFindByParamsForEntity(searchCriteria);
         return roles.size() > 0 ? roles.get(0) : null;
