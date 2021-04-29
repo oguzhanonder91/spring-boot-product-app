@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -115,39 +116,26 @@ public final class SearchCriteriaUtil {
          */
         try {
             for (String field : selectFields) {
-                List<String> fieldRelations = Arrays.asList(field.split(pathSeparator));
-                for (int i = 0; i < fieldRelations.size(); i++) {
-                    if (!relationMap.containsKey(fieldRelations.get(i)) && i == 0) {
+                String last = field.split(pathSeparator)[field.split(pathSeparator).length - 1];
+                String firstByLast = field.split(pathSeparator + last)[0];
+                if(!relationMap.containsKey(firstByLast)){
+                    if("root".equalsIgnoreCase(firstByLast)){
                         Object re = selectionClass
                                 .getDeclaredConstructor()
                                 .newInstance();
-                        relationMap.put(fieldRelations.get(i), re);
-                    }
-                    /**
-                     * fieldRelations.size() > 2 root.itemId durumunda itemId fieldin constructor
-                     * olusmasini engellemek icin (fieldRelations.size() - 1 != i) root.role.code
-                     * durumunda son field olan code constructor olusmasini engellemek icin
-                     */
-                    if (fieldRelations.size() > 2 && fieldRelations.size() - 1 != i) {
-                        String tempKey = "root";
-                        for (int j = 1; j <= i; j++) {
-                            tempKey = tempKey + "." + fieldRelations.get(j);
-                        }
-                        if (!relationMap.containsKey(tempKey)) {
-                            String mapKey = tempKey.split(pathSeparator + fieldRelations.get(i))[0];
-                            Object rel = relationMap.get(mapKey);
-                            rel = controlObject(rel);
-                            Field fieldRel = rel.getClass()
-                                    .getDeclaredField(fieldRelations.get(i));
-
-                            Object newRel = controlCollection(fieldRel);
-                            String search = field.split(pathSeparator + fieldRelations.get(i))[0];
-                            String key = search + "." + fieldRelations.get(i);
-                            relationMap.put(key, newRel);
-                        }
-
+                        relationMap.put(firstByLast, re);
+                    }else{
+                        String innerLast = firstByLast.split(pathSeparator)[firstByLast.split(pathSeparator).length - 1];
+                        String innerFirstByLast = firstByLast.split(pathSeparator + innerLast)[0];
+                        Object rel = relationMap.get(innerFirstByLast);
+                        rel = controlObject(rel);
+                        Field fieldRel = rel.getClass()
+                                .getDeclaredField(innerLast);
+                        Object newRel = controlCollection(fieldRel);
+                        relationMap.put(firstByLast, newRel);
                     }
                 }
+
             }
 
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
@@ -254,14 +242,14 @@ public final class SearchCriteriaUtil {
         Object arrObj;
         String className = field.toGenericString().split("<")[1].split(">")[0];
         try {
-            if (field.getType().getName().equals("java.util.Collection")
-                    || field.getType().getName().equals("java.util.List")
-                    || field.getType().getName().equals("java.util.ArrayList")) {
+            if (field.getType().isNestmateOf(Collection.class)
+                    || field.getType().isNestmateOf(List.class)
+                    || field.getType().isNestmateOf(ArrayList.class)) {
                 clazz = Class.forName(className);
                 arrObj = clazz.getDeclaredConstructor().newInstance();
                 newObj = new ArrayList<>(Arrays.asList(arrObj));
-            } else if (field.getType().getName().equals("java.util.Set")
-                    || field.getType().getName().equals("java.util.HashSet")) {
+            } else if (field.getType().isNestmateOf(Set.class)
+                    || field.getType().isNestmateOf(HashSet.class)) {
                 clazz = Class.forName(className);
                 arrObj = clazz.getDeclaredConstructor().newInstance();
                 newObj = new HashSet<>(Arrays.asList(arrObj));
