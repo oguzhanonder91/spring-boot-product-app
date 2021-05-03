@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -105,6 +106,22 @@ public final class SearchCriteriaUtil {
             selections.add(from.get(selectField).alias(entry.getValue()));
         }
         return selections;
+    }
+
+    public static List<Expression<?>> groupBy(LinkedHashMap<String, String> groupByMap, Map<String, From> joinMap) {
+        List<Expression<?>> groupByList = new ArrayList();
+        for (Map.Entry<String, String> entry : groupByMap.entrySet()) {
+            String[] fieldArr = entry.getKey().split(pathSeparator);
+            String selectField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : entry.getKey();
+            String relation = "root";
+            if (fieldArr.length > 1) {
+                String search = pathSeparator + selectField;
+                relation = "root." + entry.getKey().split(search)[0];
+            }
+            From from = joinMap.get(relation);
+            groupByList.add(from.get(selectField));
+        }
+        return groupByList;
     }
 
     private static <R> void rootAndInnerConstructorCreate(List<String> selectFields, Class<R> selectionClass, Map<String, Object> relationMap) {

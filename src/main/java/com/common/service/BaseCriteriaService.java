@@ -11,8 +11,4 @@ import java.util.List;
 public interface BaseCriteriaService {
 
     <R> List<R> findAllToSelectionFields(SearchCriteria searchCriteria);
-
-    <R> List<R> createNativeQuery(String sql, Class<R> selectionClass);
-
-    <R> List<R> createNativeQuery(String sql);
 }

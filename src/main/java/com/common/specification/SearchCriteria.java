@@ -20,6 +20,7 @@ public final class SearchCriteria {
     private LinkedHashMap<String, List<BaseSpecificationFilter>> filtersMap = new LinkedHashMap<>();
     private LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
     private LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> groupByMap = new LinkedHashMap<>();
     private boolean distinct;
     private Class resultClass;
 
@@ -94,6 +95,14 @@ public final class SearchCriteria {
         this.distinct = distinct;
     }
 
+    public LinkedHashMap<String, String> getGroupByMap() {
+        return groupByMap;
+    }
+
+    public void setGroupByMap(LinkedHashMap<String, String> groupByMap) {
+        this.groupByMap = groupByMap;
+    }
+
     public static class Builder {
         private final List<Sort.Order> orders = new ArrayList<>();
         private Pageable pageable;
@@ -101,6 +110,7 @@ public final class SearchCriteria {
         private final LinkedHashMap<String, List<BaseSpecificationFilter>> filtersMap = new LinkedHashMap<>();
         private final LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
         private LinkedHashMap<String, String> fields = new LinkedHashMap<>();
+        private LinkedHashMap<String, String> groupByMap = new LinkedHashMap<>();
         private boolean distinct;
         private Class resultClass;
 
@@ -212,6 +222,18 @@ public final class SearchCriteria {
             return this;
         }
 
+        public Builder groupBy(String field) {
+            String[] fieldArr = field.split(pathSeparator);
+            String relation = root;
+            if (fieldArr.length > 1) {
+                String search = pathSeparator + fieldArr[fieldArr.length - 1];
+                relation += "." + field.split(search)[0];
+                aliasesMap.add(relation);
+            }
+            this.groupByMap.put(field, field);
+            return this;
+        }
+
         public Builder distinct() {
             this.distinct = true;
             return this;
@@ -256,6 +278,7 @@ public final class SearchCriteria {
             searchCriteria.setOrsMap(this.orsMap);
             searchCriteria.setDistinct(this.distinct);
             searchCriteria.setResultClass(this.resultClass);
+            searchCriteria.setGroupByMap(this.groupByMap);
             return searchCriteria;
         }
 

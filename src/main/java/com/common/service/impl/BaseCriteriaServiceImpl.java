@@ -16,7 +16,9 @@ import javax.persistence.TupleElement;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
@@ -49,8 +51,9 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
         Map<String, From> joinMap = SearchCriteriaUtil.join(searchCriteria.getAliasesSet(), root);
 
         List<Selection<?>> selections = SearchCriteriaUtil.select(searchCriteria.getFieldsMap(), joinMap);
+        List<Expression<?>> groupBy = SearchCriteriaUtil.groupBy(searchCriteria.getGroupByMap(), joinMap);
         cq.multiselect(selections);
-        cq.distinct(searchCriteria.isDistinct());
+        cq.groupBy(groupBy);
 
         List<Predicate> predicates = new ArrayList<>();
         List<Predicate> predicatesAnd = SearchCriteriaUtil.and(searchCriteria.getFiltersMap(), joinMap, cb);
@@ -70,17 +73,4 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
         return SearchCriteriaUtil.mapForSelectionFields(tq.getResultList(), searchCriteria.getResultClass(), selections);
     }
 
-    @Override
-    public <R> List<R> createNativeQuery(String sql, Class<R> selectionClass) {
-        List<Tuple> tupleResultList = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
-        List<TupleElement<?>> a = null;
-        if (!tupleResultList.isEmpty())
-            a = tupleResultList.get(0).getElements();
-        return (List<R>) a.stream().map(TupleElement::getAlias).collect(Collectors.toList());
-    }
-
-    @Override
-    public <R> List<R> createNativeQuery(String sql) {
-        return entityManager.createNativeQuery(sql).getResultList();
-    }
 }
