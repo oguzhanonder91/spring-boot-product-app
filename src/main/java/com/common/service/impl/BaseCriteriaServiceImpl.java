@@ -50,10 +50,13 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
         Root<T> root = cq.from(convertTypeToken.convertClassForEntity(type));
         Map<String, From> joinMap = SearchCriteriaUtil.join(searchCriteria.getAliasesSet(), root);
 
+        List<Selection<?>> allSelections = new ArrayList<>();
         List<Selection<?>> selections = SearchCriteriaUtil.select(searchCriteria.getFieldsMap(), joinMap);
-        List<Expression<?>> groupBy = SearchCriteriaUtil.groupBy(searchCriteria.getGroupByMap(), joinMap);
-        cq.multiselect(selections);
-        cq.groupBy(groupBy);
+        List<Selection<?>> functionFieldSelections = SearchCriteriaUtil
+                .functionSelectFields(searchCriteria.getFunctionFiltersList(), joinMap, cb);
+        allSelections.addAll(selections);
+        allSelections.addAll(functionFieldSelections);
+        cq.multiselect(allSelections);
 
         List<Predicate> predicates = new ArrayList<>();
         List<Predicate> predicatesAnd = SearchCriteriaUtil.and(searchCriteria.getFiltersMap(), joinMap, cb);
@@ -61,6 +64,15 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
         predicates.addAll(predicatesOr);
         predicates.addAll(predicatesAnd);
         cq.where(predicates.toArray(new Predicate[0]));
+
+        List<Predicate> predicatesHaving = new ArrayList<>();
+        List<Predicate> predicatesHavingAnd = SearchCriteriaUtil.and(searchCriteria.getHavingFiltersMap(), joinMap, cb);
+        List<Predicate> predicatesHavingOr = SearchCriteriaUtil.or(searchCriteria.getHavingOrsMap(), joinMap, cb);
+        predicatesHaving.addAll(predicatesHavingAnd);
+        predicatesHaving.addAll(predicatesHavingOr);
+
+        List<Expression<?>> groupBy = SearchCriteriaUtil.groupBy(searchCriteria.getGroupByMap(), joinMap);
+        cq.groupBy(groupBy).having(predicatesHaving.toArray(new Predicate[0]));
 
         cq.orderBy(QueryUtils.toOrders(searchCriteria.getSort(), root, cb));
         TypedQuery<Tuple> tq = entityManager.createQuery(cq);
@@ -70,7 +82,7 @@ public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService 
             tq.setMaxResults(pageable.getPageSize());
         }
 
-        return SearchCriteriaUtil.mapForSelectionFields(tq.getResultList(), searchCriteria.getResultClass(), selections);
+        return SearchCriteriaUtil.mapForSelectionFields(tq.getResultList(), searchCriteria.getResultClass(), allSelections);
     }
 
 }

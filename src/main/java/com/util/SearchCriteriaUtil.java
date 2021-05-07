@@ -1,6 +1,7 @@
 package com.util;
 
 import com.common.specification.BaseSpecificationFilter;
+import com.common.specification.CriteriaFuncitonFieldFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +109,18 @@ public final class SearchCriteriaUtil {
         return selections;
     }
 
+    public static List<Selection<?>> functionSelectFields(List<CriteriaFuncitonFieldFilter> functionFiltersList, Map<String, From> joinMap,
+                                                          CriteriaBuilder criteriaBuilder) {
+        List<Selection<?>> functionalSelectsions = new ArrayList();
+        for (CriteriaFuncitonFieldFilter criteriaFuncitonFieldFilter : functionFiltersList) {
+            functionalSelectsions.add(criteriaFuncitonFieldFilter.getCriteriaFunctionType()
+                    .functionField(criteriaBuilder, criteriaFuncitonFieldFilter.getField(),
+                            criteriaFuncitonFieldFilter.getAlias(), joinMap.get(criteriaFuncitonFieldFilter.getRoot())));
+        }
+        return functionalSelectsions;
+    }
+
+
     public static List<Expression<?>> groupBy(LinkedHashMap<String, String> groupByMap, Map<String, From> joinMap) {
         List<Expression<?>> groupByList = new ArrayList();
         for (Map.Entry<String, String> entry : groupByMap.entrySet()) {
@@ -132,25 +145,22 @@ public final class SearchCriteriaUtil {
          * inner olan RoleDto nun constructorları oluşturulur. relationMap e atilir.
          */
         try {
+            Object re = selectionClass
+                    .getDeclaredConstructor()
+                    .newInstance();
+            relationMap.put("root", re);
             for (String field : selectFields) {
                 String last = field.split(pathSeparator)[field.split(pathSeparator).length - 1];
                 String firstByLast = field.split(pathSeparator + last)[0];
-                if(!relationMap.containsKey(firstByLast)){
-                    if("root".equalsIgnoreCase(firstByLast)){
-                        Object re = selectionClass
-                                .getDeclaredConstructor()
-                                .newInstance();
-                        relationMap.put(firstByLast, re);
-                    }else{
-                        String innerLast = firstByLast.split(pathSeparator)[firstByLast.split(pathSeparator).length - 1];
-                        String innerFirstByLast = firstByLast.split(pathSeparator + innerLast)[0];
-                        Object rel = relationMap.get(innerFirstByLast);
-                        rel = controlObject(rel);
-                        Field fieldRel = rel.getClass()
-                                .getDeclaredField(innerLast);
-                        Object newRel = controlCollection(fieldRel);
-                        relationMap.put(firstByLast, newRel);
-                    }
+                if (!relationMap.containsKey(firstByLast) && !"root".equalsIgnoreCase(firstByLast)) {
+                    String innerLast = firstByLast.split(pathSeparator)[firstByLast.split(pathSeparator).length - 1];
+                    String innerFirstByLast = firstByLast.split(pathSeparator + innerLast)[0];
+                    Object rel = relationMap.get(innerFirstByLast);
+                    rel = controlObject(rel);
+                    Field fieldRel = rel.getClass()
+                            .getDeclaredField(innerLast);
+                    Object newRel = controlCollection(fieldRel);
+                    relationMap.put(firstByLast, newRel);
                 }
 
             }
@@ -257,7 +267,14 @@ public final class SearchCriteriaUtil {
         Object newObj = null;
         Class<?> clazz;
         Object arrObj;
-        String className = field.toGenericString().split("<")[1].split(">")[0];
+        String className;
+        if (field.toGenericString().split("<").length == 1) {
+            className = "";
+        } else {
+            className = field.toGenericString().split("<")[1].split(">")[0];
+        }
+
+
         try {
             if (field.getType().isNestmateOf(Collection.class)
                     || field.getType().isNestmateOf(List.class)

@@ -21,6 +21,9 @@ public final class SearchCriteria {
     private LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
     private LinkedHashMap<String, String> fieldsMap = new LinkedHashMap<>();
     private LinkedHashMap<String, String> groupByMap = new LinkedHashMap<>();
+    private List<CriteriaFuncitonFieldFilter> functionFiltersList = new ArrayList<>();
+    private LinkedHashMap<String, List<BaseSpecificationFilter>> havingFiltersMap = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<BaseSpecificationFilter>> havingOrsMap = new LinkedHashMap<>();
     private boolean distinct;
     private Class resultClass;
 
@@ -103,6 +106,30 @@ public final class SearchCriteria {
         this.groupByMap = groupByMap;
     }
 
+    public LinkedHashMap<String, List<BaseSpecificationFilter>> getHavingFiltersMap() {
+        return havingFiltersMap;
+    }
+
+    public void setHavingFiltersMap(LinkedHashMap<String, List<BaseSpecificationFilter>> havingFiltersMap) {
+        this.havingFiltersMap = havingFiltersMap;
+    }
+
+    public LinkedHashMap<String, List<BaseSpecificationFilter>> getHavingOrsMap() {
+        return havingOrsMap;
+    }
+
+    public void setHavingOrsMap(LinkedHashMap<String, List<BaseSpecificationFilter>> havingOrsMap) {
+        this.havingOrsMap = havingOrsMap;
+    }
+
+    public List<CriteriaFuncitonFieldFilter> getFunctionFiltersList() {
+        return functionFiltersList;
+    }
+
+    public void setFunctionFiltersList(List<CriteriaFuncitonFieldFilter> functionFiltersList) {
+        this.functionFiltersList = functionFiltersList;
+    }
+
     public static class Builder {
         private final List<Sort.Order> orders = new ArrayList<>();
         private Pageable pageable;
@@ -111,6 +138,9 @@ public final class SearchCriteria {
         private final LinkedHashMap<String, List<BaseSpecificationFilter>> orsMap = new LinkedHashMap<>();
         private LinkedHashMap<String, String> fields = new LinkedHashMap<>();
         private LinkedHashMap<String, String> groupByMap = new LinkedHashMap<>();
+        private LinkedHashMap<String, List<BaseSpecificationFilter>> havingFiltersMap = new LinkedHashMap<>();
+        private LinkedHashMap<String, List<BaseSpecificationFilter>> havingOrsMap = new LinkedHashMap<>();
+        private List<CriteriaFuncitonFieldFilter> functionFiltersList = new ArrayList<>();
         private boolean distinct;
         private Class resultClass;
 
@@ -233,6 +263,85 @@ public final class SearchCriteria {
             this.groupByMap.put(field, field);
             return this;
         }
+        public Builder havingByAnd(SearchOperation searchOperation, String field, Object value) {
+            String[] fieldArr = field.split(pathSeparator);
+            String relation = root;
+            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
+
+            // adding join
+            if (fieldArr.length > 1) {
+                String search = "." + filterField;
+                relation = root + "." + field.split(search)[0];
+                aliasesMap.add(relation);
+            }
+
+            // adding filter
+            BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
+            if (havingFiltersMap.containsKey(relation)) {
+                havingFiltersMap.get(relation).add(filterDto);
+            } else {
+                List<BaseSpecificationFilter> adaletCoreSpecificationFilters = new ArrayList<>();
+                adaletCoreSpecificationFilters.add(filterDto);
+                havingFiltersMap.put(relation, adaletCoreSpecificationFilters);
+            }
+            return this;
+        }
+
+        public Builder havingByAnd(SearchOperation searchOperation, String field, Object from, Object to) {
+            return havingByAnd(searchOperation, field, new SearchBetween(from, to));
+        }
+
+        public Builder havingByAnd(SearchOperation searchOperation, String field) {
+            return havingByAnd(searchOperation, field, null);
+        }
+
+        public Builder havingByOr(SearchOperation searchOperation, String field, Object value) {
+            String[] fieldArr = field.split(pathSeparator);
+            String relation = root;
+            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
+
+            // adding join
+            if (fieldArr.length > 1) {
+                String search = "." + filterField;
+                relation = root + "." + field.split(search)[0];
+                aliasesMap.add(relation);
+            }
+
+            // adding or
+            BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
+            if (havingOrsMap.containsKey(relation)) {
+                havingOrsMap.get(relation).add(filterDto);
+            } else {
+                List<BaseSpecificationFilter> adaletCoreSpecificationFilters = new ArrayList<>();
+                adaletCoreSpecificationFilters.add(filterDto);
+                havingOrsMap.put(relation, adaletCoreSpecificationFilters);
+            }
+            return this;
+        }
+
+        public Builder havingByOr(SearchOperation searchOperation1, String field1, Object value1,
+                                  SearchOperation searchOperation2, String field2, Object value2) {
+            havingByOr(searchOperation1, field1, value1);
+            havingByOr(searchOperation2, field2, value2);
+            return this;
+        }
+
+        public Builder function(CriteriaFunctionType criteriaFunctionType, String field, String alias) {
+            String[] fieldArr = field.split(pathSeparator);
+            String relation = root;
+            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
+
+            // adding join
+            if (fieldArr.length > 1) {
+                String search = "." + filterField;
+                relation = root + "." + field.split(search)[0];
+                aliasesMap.add(relation);
+            }
+
+            String keyField = fieldArr[fieldArr.length - 1];
+            this.functionFiltersList.add(new CriteriaFuncitonFieldFilter(keyField, relation, alias, criteriaFunctionType));
+            return this;
+        }
 
         public Builder distinct() {
             this.distinct = true;
@@ -279,6 +388,9 @@ public final class SearchCriteria {
             searchCriteria.setDistinct(this.distinct);
             searchCriteria.setResultClass(this.resultClass);
             searchCriteria.setGroupByMap(this.groupByMap);
+            searchCriteria.setHavingFiltersMap(this.havingFiltersMap);
+            searchCriteria.setHavingOrsMap(this.havingOrsMap);
+            searchCriteria.setFunctionFiltersList(this.functionFiltersList);
             return searchCriteria;
         }
 
