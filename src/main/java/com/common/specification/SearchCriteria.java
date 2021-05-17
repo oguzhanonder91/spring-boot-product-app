@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,9 @@ public final class SearchCriteria {
     private static final String pathSeparator =  "\\.";
 
     private static final String root = "root";
+
+    private static final String COMMA = ",";
+
 
     private SearchCriteria() {
     }
@@ -229,18 +233,23 @@ public final class SearchCriteria {
         }
 
         public Builder showField(String field) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            if (fieldArr.length > 1) {
-                String search = pathSeparator + fieldArr[fieldArr.length - 1];
-                relation += "." + field.split(search)[0];
-                aliasesMap.add(relation);
+            List<String> fields = Arrays.asList(field.split(COMMA));
+            if (fields.size() > 1) {
+                for (String item : fields) {
+                    showFieldOp(item, item);
+                }
+            } else {
+                showFieldOp(field, field);
             }
-            this.fields.put(field, field);
             return this;
         }
 
         public Builder showField(String field, String value) {
+            showFieldOp(field, value);
+            return this;
+        }
+
+        private void showFieldOp(String field, String value) {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             if (fieldArr.length > 1) {
@@ -249,10 +258,21 @@ public final class SearchCriteria {
                 aliasesMap.add(relation);
             }
             this.fields.put(field, value);
-            return this;
         }
 
         public Builder groupBy(String field) {
+            List<String> fields = Arrays.asList(field.split(COMMA));
+            if (fields.size() > 1) {
+                for (String item : fields) {
+                    groupByOperation(item);
+                }
+            } else {
+                groupByOperation(field);
+            }
+            return this;
+        }
+
+        public Builder groupByOperation(String field) {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             if (fieldArr.length > 1) {
