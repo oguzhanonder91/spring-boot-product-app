@@ -28,7 +28,7 @@ public final class SearchCriteria {
     private boolean distinct;
     private Class resultClass;
 
-    private static final String pathSeparator =  "\\.";
+    private static final String pathSeparator = "\\.";
 
     private static final String root = "root";
 
@@ -154,7 +154,7 @@ public final class SearchCriteria {
 
         public Builder and(SearchOperation searchOperation, String field, Object value) {
             String[] fieldArr = field.split(pathSeparator);
-            String relation= root;
+            String relation = root;
             String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
 
             // adding join
@@ -183,15 +183,15 @@ public final class SearchCriteria {
             return and(searchOperation, field, null);
         }
 
-        public Builder or(SearchOperation searchOperation1, String field1, Object value1,SearchOperation searchOperation2, String field2, Object value2) {
-            or(searchOperation1,field1,value1);
-            or(searchOperation2,field2,value2);
+        public Builder or(SearchOperation searchOperation1, String field1, Object value1, SearchOperation searchOperation2, String field2, Object value2) {
+            or(searchOperation1, field1, value1);
+            or(searchOperation2, field2, value2);
             return this;
         }
 
         private Builder or(SearchOperation searchOperation, String field, Object value) {
             String[] fieldArr = field.split(pathSeparator);
-            String relation= root;
+            String relation = root;
             String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
 
             // adding join
@@ -272,7 +272,7 @@ public final class SearchCriteria {
             return this;
         }
 
-        public Builder groupByOperation(String field) {
+        private void groupByOperation(String field) {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             if (fieldArr.length > 1) {
@@ -281,8 +281,8 @@ public final class SearchCriteria {
                 aliasesMap.add(relation);
             }
             this.groupByMap.put(field, field);
-            return this;
         }
+
         public Builder havingByAnd(SearchOperation searchOperation, String field, Object value) {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
