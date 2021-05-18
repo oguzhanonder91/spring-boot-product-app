@@ -2,6 +2,7 @@ package com.util;
 
 import com.common.specification.BaseSpecificationFilter;
 import com.common.specification.CriteriaFuncitonFieldFilter;
+import org.modelmapper.internal.util.Primitives;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -115,7 +117,7 @@ public final class SearchCriteriaUtil {
         for (CriteriaFuncitonFieldFilter criteriaFuncitonFieldFilter : functionFiltersList) {
             functionalSelectsions.add(criteriaFuncitonFieldFilter.getCriteriaFunctionType()
                     .functionField(criteriaBuilder, criteriaFuncitonFieldFilter.getField(),
-                            criteriaFuncitonFieldFilter.getAlias(), joinMap.get(criteriaFuncitonFieldFilter.getRoot())));
+                            criteriaFuncitonFieldFilter.getAlias(), joinMap.get(criteriaFuncitonFieldFilter.getRoot()), criteriaFuncitonFieldFilter.getWhens()));
         }
         return functionalSelectsions;
     }
@@ -246,15 +248,20 @@ public final class SearchCriteriaUtil {
         List<R> result = new ArrayList();
         List<String> selectFields = selections.stream().map(item -> "root." + item.getAlias()).collect(Collectors.toList());
         for (Tuple o : resultList) {
-            Map<String, Object> relationMap = new HashMap();
+            Object re = primitiveCheck(selectionClass, o.get(0).toString());
+            if (re != null) {
+                result.add((R) re);
+            } else {
+                Map<String, Object> relationMap = new HashMap();
 
-            rootAndInnerConstructorCreate(selectFields, selectionClass, relationMap);
+                rootAndInnerConstructorCreate(selectFields, selectionClass, relationMap);
 
-            settingFieldsToConstructors(selectFields, relationMap, o, selections);
+                settingFieldsToConstructors(selectFields, relationMap, o, selections);
 
-            settingInnerDtosToRoot(relationMap);
+                settingInnerDtosToRoot(relationMap);
 
-            result.add((R) relationMap.get("root"));
+                result.add((R) relationMap.get("root"));
+            }
         }
         return result;
     }
@@ -309,6 +316,27 @@ public final class SearchCriteriaUtil {
             return ((HashSet<?>) rel).toArray()[0];
         }
         return rel;
+    }
+
+    public static Object primitiveCheck(Class selectionClass, String tupleString) {
+        Object re = null;
+        if (Primitives.isPrimitiveWrapper(selectionClass) || selectionClass.isPrimitive() ||
+                selectionClass.equals(String.class) || selectionClass.equals(BigDecimal.class)) {
+            Class clazz = null;
+            try {
+                if (selectionClass.equals(String.class) || selectionClass.equals(BigDecimal.class)) {
+                    clazz = selectionClass;
+                } else {
+                    clazz = Primitives.wrapperFor(selectionClass);
+                }
+                re = clazz.getConstructor(String.class).newInstance(tupleString);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | SecurityException | NoSuchMethodException e) {
+                logger.error(e.getLocalizedMessage());
+                logger.debug(e.getLocalizedMessage(), e);
+            }
+        }
+        return re;
     }
 
 }

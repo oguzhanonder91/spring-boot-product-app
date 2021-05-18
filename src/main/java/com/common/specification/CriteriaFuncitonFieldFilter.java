@@ -10,7 +10,7 @@ public class CriteriaFuncitonFieldFilter {
     private String root;
     private String alias;
     private CriteriaFunctionType criteriaFunctionType;
-
+    private Object[] whens;
 
     public CriteriaFuncitonFieldFilter() {
     }
@@ -20,6 +20,14 @@ public class CriteriaFuncitonFieldFilter {
         this.root = root;
         this.alias = alias;
         this.criteriaFunctionType = criteriaFunctionType;
+    }
+
+    public CriteriaFuncitonFieldFilter(String field, String root, String alias, CriteriaFunctionType criteriaFunctionType, Object[] whens) {
+        this.field = field;
+        this.root = root;
+        this.alias = alias;
+        this.criteriaFunctionType = criteriaFunctionType;
+        this.whens = whens;
     }
 
     public String getField() {
@@ -52,5 +60,13 @@ public class CriteriaFuncitonFieldFilter {
 
     public void setCriteriaFunctionType(CriteriaFunctionType criteriaFunctionType) {
         this.criteriaFunctionType = criteriaFunctionType;
+    }
+
+    public Object[] getWhens() {
+        return whens;
+    }
+
+    public void setWhens(Object[] whens) {
+        this.whens = whens;
     }
 }

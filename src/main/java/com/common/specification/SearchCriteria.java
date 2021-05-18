@@ -346,7 +346,7 @@ public final class SearchCriteria {
             return this;
         }
 
-        public Builder function(CriteriaFunctionType criteriaFunctionType, String field, String alias) {
+        public Builder function(CriteriaFunctionType criteriaFunctionType, String field, String alias, Object... whens) {
             String[] fieldArr = field.split(pathSeparator);
             String relation = root;
             String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
@@ -359,7 +359,7 @@ public final class SearchCriteria {
             }
 
             String keyField = fieldArr[fieldArr.length - 1];
-            this.functionFiltersList.add(new CriteriaFuncitonFieldFilter(keyField, relation, alias, criteriaFunctionType));
+            this.functionFiltersList.add(new CriteriaFuncitonFieldFilter(keyField, relation, alias, criteriaFunctionType, whens));
             return this;
         }
 
