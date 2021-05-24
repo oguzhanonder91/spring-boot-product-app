@@ -635,7 +635,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
 
     @Override
     public <R> List<R> caboryaFindByParams(SearchCriteria searchCriteria) {
-        if (searchCriteria.getFieldsMap().size() <= 0) {
+        if (searchCriteria.getFieldsMap().size() <= 0 && searchCriteria.getFunctionFiltersList().isEmpty()) {
             return (List<R>) this.caboryaFindByParamsForDto(searchCriteria);
         }
         if (searchCriteria.getResultClass() == null) {
