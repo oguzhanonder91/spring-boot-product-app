@@ -1,6 +1,7 @@
 package com.common.service;
 
 import com.common.dto.BaseDto;
+import com.common.dto.CaboryaRequestDto;
 import com.common.entity.BaseEntity;
 import com.common.specification.SearchCriteria;
 import org.springframework.data.domain.Example;
@@ -187,7 +188,15 @@ public interface BaseService<T extends BaseEntity,D extends BaseDto> extends Bas
 
     List<D> caboryaFindByParamsForDto(SearchCriteria searchCriteria);
 
+    Page<T> findAllForEntity(SearchCriteria adaletCoreSearchCriteria);
+
+    Page<D> findAllForDto(SearchCriteria adaletCoreSearchCriteria);
+
     <R> List<R> caboryaFindByParams(SearchCriteria searchCriteria);
+
+    <R> List<R> caboryaFindByRestTemplateForList(CaboryaRequestDto caboryaRequestDto, Class ...clazz);
+
+    <R> Page<R> caboryaFindByRestTemplateForPage(CaboryaRequestDto caboryaRequestDto, Class ...clazz);
 
     Long caboryaCountByParams(SearchCriteria searchCriteria);
 }

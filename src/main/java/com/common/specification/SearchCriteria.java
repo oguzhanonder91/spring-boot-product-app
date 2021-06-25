@@ -1,5 +1,7 @@
 package com.common.specification;
 
+import com.common.dto.FilterDto;
+import com.common.dto.SortDto;
 import com.util.enums.EntityState;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -153,16 +155,9 @@ public final class SearchCriteria {
         }
 
         public Builder and(SearchOperation searchOperation, String field, Object value) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
-
-            // adding join
-            if (fieldArr.length > 1) {
-                String search = pathSeparator + filterField;
-                relation = root + "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
+            String[] result = addedAliases(field);
+            String relation = result[0];
+            String filterField = result[1];
             // adding filter
             BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
             if (filtersMap.containsKey(relation)) {
@@ -183,6 +178,15 @@ public final class SearchCriteria {
             return and(searchOperation, field, null);
         }
 
+        public Builder and(List<FilterDto> filterDtos) {
+            if (filterDtos != null && !filterDtos.isEmpty()) {
+                for (FilterDto filterDto : filterDtos) {
+                    and(SearchOperation.valueOf(filterDto.getOperation()), filterDto.getField(), filterDto.getValue());
+                }
+            }
+            return this;
+        }
+
         public Builder or(SearchOperation searchOperation1, String field1, Object value1, SearchOperation searchOperation2, String field2, Object value2) {
             or(searchOperation1, field1, value1);
             or(searchOperation2, field2, value2);
@@ -190,16 +194,9 @@ public final class SearchCriteria {
         }
 
         private Builder or(SearchOperation searchOperation, String field, Object value) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
-
-            // adding join
-            if (fieldArr.length > 1) {
-                String search = pathSeparator + filterField;
-                relation = root + "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
+            String[] result = addedAliases(field);
+            String relation = result[0];
+            String filterField = result[1];
             // or operation
             BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
             if (orsMap.containsKey(relation)) {
@@ -214,12 +211,7 @@ public final class SearchCriteria {
 
         public Builder showFields(LinkedHashMap<String, String> fields) {
             for (Map.Entry<String, String> entry : fields.entrySet()) {
-                String[] fieldArr = entry.getKey().split(pathSeparator);
-                if (fieldArr.length > 1) {
-                    String search = pathSeparator + fieldArr[fieldArr.length - 1];
-                    String relation = root + "." + entry.getKey().split(search)[0];
-                    aliasesMap.add(relation);
-                }
+                addedAliases(entry.getKey());
             }
             this.fields = fields;
             return this;
@@ -250,13 +242,7 @@ public final class SearchCriteria {
         }
 
         private void showFieldOp(String field, String value) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            if (fieldArr.length > 1) {
-                String search = pathSeparator + fieldArr[fieldArr.length - 1];
-                relation += "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
+            addedAliases(field);
             this.fields.put(field, value);
         }
 
@@ -273,28 +259,14 @@ public final class SearchCriteria {
         }
 
         private void groupByOperation(String field) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            if (fieldArr.length > 1) {
-                String search = pathSeparator + fieldArr[fieldArr.length - 1];
-                relation += "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
+            addedAliases(field);
             this.groupByMap.put(field, field);
         }
 
         public Builder havingByAnd(SearchOperation searchOperation, String field, Object value) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
-
-            // adding join
-            if (fieldArr.length > 1) {
-                String search = "." + filterField;
-                relation = root + "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
-
+            String[] result = addedAliases(field);
+            String relation = result[0];
+            String filterField = result[1];
             // adding filter
             BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
             if (havingFiltersMap.containsKey(relation)) {
@@ -316,17 +288,9 @@ public final class SearchCriteria {
         }
 
         public Builder havingByOr(SearchOperation searchOperation, String field, Object value) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
-
-            // adding join
-            if (fieldArr.length > 1) {
-                String search = "." + filterField;
-                relation = root + "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
-
+            String[] result = addedAliases(field);
+            String relation = result[0];
+            String filterField = result[1];
             // adding or
             BaseSpecificationFilter filterDto = new BaseSpecificationFilter(filterField, value, searchOperation);
             if (havingOrsMap.containsKey(relation)) {
@@ -347,19 +311,10 @@ public final class SearchCriteria {
         }
 
         public Builder function(CriteriaFunctionType criteriaFunctionType, String field, String alias, Object... whens) {
-            String[] fieldArr = field.split(pathSeparator);
-            String relation = root;
-            String filterField = fieldArr.length > 1 ? fieldArr[fieldArr.length - 1] : field;
-
-            // adding join
-            if (fieldArr.length > 1) {
-                String search = "." + filterField;
-                relation = root + "." + field.split(search)[0];
-                aliasesMap.add(relation);
-            }
-
-            String keyField = fieldArr[fieldArr.length - 1];
-            this.functionFiltersList.add(new CriteriaFuncitonFieldFilter(keyField, relation, alias, criteriaFunctionType, whens));
+            String[] result = addedAliases(field);
+            String relation = result[0];
+            String filterField = result[1];
+            this.functionFiltersList.add(new CriteriaFuncitonFieldFilter(filterField, relation, alias, criteriaFunctionType, whens));
             return this;
         }
 
@@ -368,8 +323,18 @@ public final class SearchCriteria {
             return this;
         }
 
+        public Builder sort(List<SortDto> sortDtos) {
+            if (sortDtos != null && !sortDtos.isEmpty()) {
+                for (SortDto sortDto : sortDtos) {
+                    sort(Sort.Direction.fromString(sortDto.getDirection()), sortDto.getField());
+                }
+            }
+            return this;
+        }
+
         public Builder sort(Sort.Direction type, String field) {
             Sort.Order order = null;
+            addedAliases(field);
             if (type.isAscending()) {
                 order = Sort.Order.asc(field);
             }
@@ -388,6 +353,25 @@ public final class SearchCriteria {
         public Builder setResultClass(Class clazz) {
             this.resultClass = clazz;
             return this;
+        }
+
+        private String[] addedAliases(String field) {
+            // 0 : relation , 1: seperatorfield
+            String[] strings = new String[2];
+            String[] fieldArr = field.split(pathSeparator);
+            String relation = root;
+            if (fieldArr.length > 1) {
+                String separatorField = fieldArr[fieldArr.length - 1];
+                String search = pathSeparator + separatorField;
+                relation += "." + field.split(search)[0];
+                strings[0] = relation;
+                strings[1] = separatorField;
+                aliasesMap.add(relation);
+            } else {
+                strings[0] = relation;
+                strings[1] = field;
+            }
+            return strings;
         }
 
         public SearchCriteria build() {

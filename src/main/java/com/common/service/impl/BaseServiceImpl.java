@@ -1,6 +1,7 @@
 package com.common.service.impl;
 
 import com.common.dto.BaseDto;
+import com.common.dto.CaboryaRequestDto;
 import com.common.entity.BaseEntity;
 import com.common.repository.BaseRepository;
 import com.common.service.BaseService;
@@ -9,6 +10,7 @@ import com.common.specification.SearchCriteria;
 import com.common.specification.SearchOperation;
 import com.google.common.reflect.TypeToken;
 import com.util.ConvertTypeToken;
+import com.util.SearchCriteriaUtil;
 import com.util.SecurityUtil;
 import com.util.enums.EntityState;
 import org.modelmapper.ModelMapper;
@@ -621,6 +623,19 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
     }
 
     @Override
+    public Page<T> findAllForEntity(SearchCriteria searchCriteria) {
+        GenericSpecification<T> specification = new GenericSpecification<>(searchCriteria);
+        return baseRepository.findAll(specification, searchCriteria.getPageable());
+    }
+
+    @Override
+    public Page<D> findAllForDto(SearchCriteria searchCriteria) {
+        Type pageType = new TypeToken<Page<D>>(getClass()) {
+        }.getType();
+        return modelMapper.map(this.findAllForEntity(searchCriteria), pageType);
+    }
+
+    @Override
     public List<D> caboryaFindByParamsForDto(SearchCriteria searchCriteria) {
         Type type = new TypeToken<List<D>>(getClass()) {
         }.getType();
@@ -635,14 +650,34 @@ public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> e
 
     @Override
     public <R> List<R> caboryaFindByParams(SearchCriteria searchCriteria) {
-        if (searchCriteria.getFieldsMap().size() <= 0 && searchCriteria.getFunctionFiltersList().isEmpty()) {
-            return (List<R>) this.caboryaFindByParamsForDto(searchCriteria);
-        }
         if (searchCriteria.getResultClass() == null) {
             Type type = new TypeToken<D>(getClass()) {
             }.getType();
             searchCriteria.setResultClass(convertTypeToken.convertClassForDto(type));
         }
+        if (searchCriteria.getFieldsMap().size() <= 0
+                && searchCriteria.getFunctionFiltersList().isEmpty()) {
+            return (List<R>) this.caboryaFindByParamsForDto(searchCriteria);
+        }
         return this.findAllToSelectionFields(searchCriteria);
+    }
+    @Override
+    public <R> List<R> caboryaFindByRestTemplateForList(CaboryaRequestDto caboryaRequestDto, Class... clazz) {
+        return this.caboryaFindByParams(
+                SearchCriteriaUtil.prepareSearchCriteria(caboryaRequestDto, clazz));
+    }
+
+    @Override
+    public <R> Page<R> caboryaFindByRestTemplateForPage(CaboryaRequestDto caboryaRequestDto, Class... clazz) {
+        return this.adaletCoreBaseFindByParamsForDtoPage(
+                SearchCriteriaUtil.prepareSearchCriteria(caboryaRequestDto, clazz));
+    }
+
+    private <R> Page<R> adaletCoreBaseFindByParamsForDtoPage(SearchCriteria searchCriteria) {
+        GenericSpecification<T> specification = new GenericSpecification<>(searchCriteria);
+        Type type = new TypeToken<Page<D>>(getClass()) {
+        }.getType();
+        return modelMapper
+                .map(baseRepository.findAll(specification, searchCriteria.getPageable()), type);
     }
 }

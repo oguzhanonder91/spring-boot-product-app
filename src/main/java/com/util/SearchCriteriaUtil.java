@@ -1,7 +1,9 @@
 package com.util;
 
+import com.common.dto.CaboryaRequestDto;
 import com.common.specification.BaseSpecificationFilter;
 import com.common.specification.CriteriaFuncitonFieldFilter;
+import com.common.specification.SearchCriteria;
 import org.modelmapper.internal.util.Primitives;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -337,6 +339,25 @@ public final class SearchCriteriaUtil {
             }
         }
         return re;
+    }
+
+    public static SearchCriteria prepareSearchCriteria(CaboryaRequestDto caboryaRequestDto, Class... clazz) {
+        SearchCriteria.Builder builder = new SearchCriteria.Builder();
+
+        assert caboryaRequestDto.getFilterDtos() != null;
+        builder.and(caboryaRequestDto.getFilterDtos());
+
+        assert caboryaRequestDto.getSortDtos() != null;
+        builder.sort(caboryaRequestDto.getSortDtos());
+
+        assert caboryaRequestDto.getPageableDto() != null;
+        builder.pageable(caboryaRequestDto.getPageableDto().getPage(), caboryaRequestDto.getPageableDto().getSize());
+
+        assert clazz != null && clazz.length > 0;
+        builder.setResultClass(clazz[0]);
+
+        SearchCriteria searchCriteria = builder.build();
+        return searchCriteria;
     }
 
 }
