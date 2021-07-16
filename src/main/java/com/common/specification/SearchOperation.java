@@ -9,25 +9,25 @@ public enum SearchOperation {
     GREATER_THAN() {
         @Override
         public Predicate predicate(CriteriaBuilder builder, String field, Object value, From from) {
-            return builder.greaterThan(from.get(field), value.toString());
+            return builder.greaterThan(from.get(field), CastExpression.cast(value, builder));
         }
     },
     LESS_THAN() {
         @Override
         public Predicate predicate(CriteriaBuilder builder, String field, Object value, From from) {
-            return builder.lessThan(from.get(field), value.toString());
+            return builder.lessThan(from.get(field), CastExpression.cast(value, builder));
         }
     },
     GREATER_THAN_EQUAL() {
         @Override
         public Predicate predicate(CriteriaBuilder builder, String field, Object value, From from) {
-            return builder.greaterThanOrEqualTo(from.get(field), value.toString());
+            return builder.greaterThanOrEqualTo(from.get(field), CastExpression.cast(value, builder));
         }
     },
     LESS_THAN_EQUAL() {
         @Override
         public Predicate predicate(CriteriaBuilder builder, String field, Object value, From from) {
-            return builder.lessThanOrEqualTo(from.get(field), value.toString());
+            return builder.lessThanOrEqualTo(from.get(field), CastExpression.cast(value, builder));
         }
     },
     NOT_EQUAL() {
