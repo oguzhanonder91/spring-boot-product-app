@@ -2,8 +2,6 @@ package com.common.dto;
 
 import com.util.enums.TokenType;
 
-import javax.persistence.Column;
-
 /**
  * @author Oğuzhan ÖNDER
  * @date 14.04.2021 - 12:12

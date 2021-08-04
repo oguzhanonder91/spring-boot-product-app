@@ -1,6 +1,5 @@
 package com.common.dto;
 
-import com.common.entity.Role;
 import com.util.validation.PasswordMatches;
 import com.util.validation.ValidEmail;
 import com.util.validation.ValidPassword;

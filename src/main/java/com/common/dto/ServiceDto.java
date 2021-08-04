@@ -1,10 +1,6 @@
 package com.common.dto;
 
-import com.common.entity.ServiceGroup;
 import com.util.enums.MethodType;
-
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
 
 /**
  * @author Oğuzhan ÖNDER

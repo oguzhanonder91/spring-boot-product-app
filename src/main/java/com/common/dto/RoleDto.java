@@ -1,6 +1,5 @@
 package com.common.dto;
 
-import com.common.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Collection;

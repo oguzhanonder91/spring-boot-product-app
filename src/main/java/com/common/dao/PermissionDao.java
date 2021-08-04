@@ -8,10 +8,8 @@ import com.common.specification.SearchCriteria;
 import com.common.specification.SearchOperation;
 import com.util.enums.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

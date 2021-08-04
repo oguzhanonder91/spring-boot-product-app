@@ -1,7 +1,6 @@
 package com.common.dto;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class BaseResponse<T> implements Serializable {
 

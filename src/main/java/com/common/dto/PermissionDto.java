@@ -1,11 +1,7 @@
 package com.common.dto;
 
-import com.common.entity.Role;
-import com.common.entity.User;
 import com.util.enums.PermissionType;
 
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
 import java.util.Collection;
 
 /**

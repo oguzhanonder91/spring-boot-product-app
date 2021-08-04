@@ -1,11 +1,5 @@
 package com.common.dto;
 
-import com.common.entity.Menu;
-
-import javax.persistence.Column;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 import java.util.List;
 
 /**
