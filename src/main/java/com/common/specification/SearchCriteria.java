@@ -181,7 +181,7 @@ public final class SearchCriteria {
         public Builder and(List<FilterDto> filterDtos) {
             if (filterDtos != null && !filterDtos.isEmpty()) {
                 for (FilterDto filterDto : filterDtos) {
-                    and(SearchOperation.valueOf(filterDto.getOperation()), filterDto.getField(), filterDto.getValue());
+                    SearchOperation.valueOf(filterDto.getOperation()).selectMethod(this, filterDto.getField(), filterDto.getValue());
                 }
             }
             return this;
