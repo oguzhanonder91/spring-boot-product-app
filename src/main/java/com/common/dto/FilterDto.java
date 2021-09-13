@@ -6,6 +6,8 @@ package com.common.dto;
  */
 public class FilterDto {
     private String field;
+
+    /* If use between operation you must use SearchBetween object*/
     private Object value;
     /**
      * GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL, NOT_EQUAL,
