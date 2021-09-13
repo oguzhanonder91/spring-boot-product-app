@@ -1,5 +1,7 @@
 package com.common.specification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
@@ -111,12 +113,10 @@ public enum SearchOperation {
     BETWEEN() {
         @Override
         public Predicate predicate(CriteriaBuilder builder, String field, Object value, From from) {
-            if (value instanceof SearchBetween) {
-                SearchBetween searchBetween = (SearchBetween) value;
-                return builder.and(builder.greaterThanOrEqualTo(from.get(field), searchBetween.getFrom().toString()),
-                        builder.lessThanOrEqualTo(from.get(field), searchBetween.getTo().toString()));
-            }
-            return builder.between(from.get(field), "", "");
+            final ObjectMapper objectMapper = new ObjectMapper();
+            SearchBetween searchBetween = objectMapper.convertValue(value, SearchBetween.class);
+            return builder.and(builder.greaterThanOrEqualTo(from.get(field), searchBetween.getFrom().toString()),
+                    builder.lessThanOrEqualTo(from.get(field), searchBetween.getTo().toString()));
         }
     };
 
