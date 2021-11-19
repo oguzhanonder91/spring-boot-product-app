@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 public abstract class BaseServiceImpl<T extends BaseEntity, D extends BaseDto> extends BaseCriteriaServiceImpl<T> implements BaseService<T, D> {
 
     @Autowired

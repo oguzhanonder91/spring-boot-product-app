@@ -1,6 +1,5 @@
 package com.common.service.impl;
 
-import com.common.service.BaseCriteriaService;
 import com.common.specification.SearchCriteria;
 import com.google.common.reflect.TypeToken;
 import com.util.ConvertTypeToken;
@@ -8,7 +7,6 @@ import com.util.SearchCriteriaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
@@ -29,16 +27,14 @@ import java.util.Map;
  * @author Oğuzhan ÖNDER
  * @date 14.04.2021 - 11:20
  */
-@Service
-public abstract class BaseCriteriaServiceImpl<T> implements BaseCriteriaService {
+public abstract class BaseCriteriaServiceImpl<T> {
 
     @Autowired
     private EntityManager entityManager;
 
     private final ConvertTypeToken<T, T> convertTypeToken = new ConvertTypeToken<>();
 
-    @Override
-    public <R> List<R> findAllToSelectionFields(SearchCriteria searchCriteria) {
+    protected  <R> List<R> findAllToSelectionFields(SearchCriteria searchCriteria) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 

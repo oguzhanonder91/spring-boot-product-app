@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface BaseService<T extends BaseEntity,D extends BaseDto> extends BaseCriteriaService{
+public interface BaseService<T extends BaseEntity,D extends BaseDto>{
 
     T updateForEntity(T entity);
 
