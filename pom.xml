@@ -19,7 +19,7 @@
         <passay.version>1.0</passay.version>
         <guava.version>30.0-jre</guava.version>
         <io.jsonwebtoken.version>0.10.7</io.jsonwebtoken.version>
-        <jackson.core.version>2.11.1</jackson.core.version>
+        <jackson.core.version>2.12.6.1</jackson.core.version>
         <modelmapper.version>2.3.8</modelmapper.version>
     </properties>
 
